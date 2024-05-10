@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/allegro/include/"
+            ],
+            "cppStandard": "c++14",
+            "compilerPath": "C:/llvm-mingw-20231128-ucrt-x86_64/bin/clang++.exe"
+        }
+    ],
+    "version": 4
+}
