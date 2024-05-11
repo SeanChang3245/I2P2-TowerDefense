@@ -6,8 +6,7 @@
                 "${workspaceFolder}/**",
                 "C:/allegro/include/"
             ],
-            "cppStandard": "c++14",
-            "compilerPath": "C:/llvm-mingw-20231128-ucrt-x86_64/bin/clang++.exe"
+            "cppStandard": "c++14"
         }
     ],
     "version": 4

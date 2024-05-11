@@ -24,6 +24,7 @@ Plane::Plane() : Sprite("play/plane.png", -100, Engine::GameEngine::GetInstance(
 	shockwave = Engine::Resources::GetInstance().GetBitmap("play/shockwave.png");
 	Velocity = Engine::Point(800, 0);
 }
+
 void Plane::Update(float deltaTime) {
 	int phase;
 	float scaleExp;
