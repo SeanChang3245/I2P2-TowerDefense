@@ -24,6 +24,7 @@
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
 #include "Turret/TurretButton.hpp"
+#include "Engine/LOG.hpp"
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = { Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1) };
@@ -32,16 +33,22 @@ const int PlayScene::BlockSize = 64;
 const float PlayScene::DangerTime = 7.61;
 const Engine::Point PlayScene::SpawnGridPoint = Engine::Point(-1, 0);
 const Engine::Point PlayScene::EndGridPoint = Engine::Point(MapWidth, MapHeight - 1);
+
+// code to activate cheat mode
 const std::vector<int> PlayScene::code = { ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEGRO_KEY_DOWN, ALLEGRO_KEY_DOWN,
 									ALLEGRO_KEY_LEFT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_RIGHT,
 									ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER };
+
 Engine::Point PlayScene::GetClientSize() {
 	return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
 }
+
 void PlayScene::Initialize() {
 	// TODO: [HACKATHON-3-BUG] (1/5): There's a bug in this file, which crashes the game when you lose. Try to find it.
 	// TODO: [HACKATHON-3-BUG] (2/5): Find out the cheat code to test.
     // TODO: [HACKATHON-3-BUG] (2/5): It should generate a Plane, and add 10000 to the money, but it doesn't work now.
+	Engine::LOG(Engine::INFO) << "enter play scene::initialize\n";
+
 	mapState.clear();
 	keyStrokes.clear();
 	ticks = 0;
@@ -49,6 +56,7 @@ void PlayScene::Initialize() {
 	lives = 10;
 	money = 150;
 	SpeedMult = 1;
+	
 	// Add groups from bottom to top.
 	AddNewObject(TileMapGroup = new Group());
 	AddNewObject(GroundEffectGroup = new Group());
@@ -57,6 +65,7 @@ void PlayScene::Initialize() {
 	AddNewObject(EnemyGroup = new Group());
 	AddNewObject(BulletGroup = new Group());
 	AddNewObject(EffectGroup = new Group());
+	
 	// Should support buttons.
 	AddNewControlObject(UIGroup = new Group());
 	ReadMap();
@@ -67,9 +76,11 @@ void PlayScene::Initialize() {
 	imgTarget->Visible = false;
 	preview = nullptr;
 	UIGroup->AddNewObject(imgTarget);
+
 	// Preload Lose Scene
 	deathBGMInstance = Engine::Resources::GetInstance().GetSampleInstance("astronomia.ogg");
 	Engine::Resources::GetInstance().GetBitmap("lose/benjamin-happy.png");
+	
 	// Start BGM.
 	bgmId = AudioHelper::PlayBGM("play.ogg");
 }
@@ -261,7 +272,8 @@ void PlayScene::OnKeyDown(int keyCode) {
 		keyStrokes.push_back(keyCode);
 		if (keyStrokes.size() > code.size())
 			keyStrokes.pop_front();
-		if (keyCode == ALLEGRO_KEY_ENTER && keyStrokes.size() == code.size()) {
+		if (keyCode == ALLEGRO_KEY_ENTER && keyStrokes.size() == code.size()) 
+		{
 			auto it = keyStrokes.begin();
 			for (int c : code) {
 				if (!((*it == c) ||
@@ -270,6 +282,9 @@ void PlayScene::OnKeyDown(int keyCode) {
 					return;
 				++it;
 			}
+
+			// successfully enter cheat code
+			money += 10000;
 			EffectGroup->AddNewObject(new Plane());
 		}
 	}
@@ -295,7 +310,7 @@ void PlayScene::Hit() {
 	lives--;
 	UILives->Text = std::string("Life ") + std::to_string(lives);
 	if (lives <= 0) {
-		Engine::GameEngine::GetInstance().ChangeScene("lose-scene");
+		Engine::GameEngine::GetInstance().ChangeScene("lose");
 	}
 }
 int PlayScene::GetMoney() const {
@@ -344,14 +359,25 @@ void PlayScene::ReadEnemyWave() {
     // TODO: [HACKATHON-3-BUG] (3/5): Trace the code to know how the enemies are created.
     // TODO: [HACKATHON-3-BUG] (3/5): There is a bug in these files, which let the game only spawn the first enemy, try to fix it.
     std::string filename = std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+	Engine::LOG(Engine::INFO) << "Loaded Resource<text>: " << filename;
+
 	// Read enemy file.
-	float type, wait, repeat;
+	int type, repeat;
+	float wait;
 	enemyWaveData.clear();
 	std::ifstream fin(filename);
 	while (fin >> type && fin >> wait && fin >> repeat) {
+		std::cout << "getting enemy data\n";
 		for (int i = 0; i < repeat; i++)
 			enemyWaveData.emplace_back(type, wait);
 	}
+
+	std::cout << "enemyWaveData:\n";
+	for(auto p : enemyWaveData)
+	{
+		std::cout << p.first << ' ' << p.second << '\n';
+	}
+
 	fin.close();
 }
 void PlayScene::ConstructUI() {
