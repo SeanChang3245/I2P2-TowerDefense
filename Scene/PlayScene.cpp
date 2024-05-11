@@ -284,7 +284,7 @@ void PlayScene::OnKeyDown(int keyCode) {
 			}
 
 			// successfully enter cheat code
-			money += 10000;
+			EarnMoney(10000);
 			EffectGroup->AddNewObject(new Plane());
 		}
 	}
