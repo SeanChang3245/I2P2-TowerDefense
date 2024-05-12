@@ -12,7 +12,10 @@ public:
 	void Initialize() override;
 	void Terminate() override;
 	void Update(float deltaTime) override;
-	void BackOnClick(int stage);
+	void BackOnClick();
+
+	// [TODO]
+	void handleUserInput();
 };
 
 #endif // WINSCENE_HPP
