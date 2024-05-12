@@ -13,7 +13,7 @@ public:
     explicit StartScene() = default;
     void Initialize() override;
     void Terminate() override;
-    void PlayOnClick(int stage);
-    void SettingsOnClick(int stage);
+    void PlayOnClick();
+    void SettingsOnClick();
 };
 #endif //INC_2024_I2P2_TOWERDEFENSE_WITH_ANSWER_STARTSCENE_H

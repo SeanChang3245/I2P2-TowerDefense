@@ -185,6 +185,7 @@ namespace Engine {
 			throw std::invalid_argument("Cannot change to a unknown scene.");
 		// Terminate the old scene.
 		activeScene->Terminate();
+		// Assign new scene
 		activeScene = scenes[name];
 		// Release unused resources.
 		if (freeMemoryOnSceneChanged)

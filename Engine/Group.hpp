@@ -22,6 +22,7 @@ namespace Engine {
 		//       however this implementation brings us more convenience than the impact
 		//       on performance. Trying to deal with cache misses requires complicated code,
 		//       so we'll just ignore it for simplicity.
+		
 		/// <summary>
 		/// Add Object to scene.
 		/// </summary>
