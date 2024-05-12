@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.27)
 project(2024_I2P2_TowerDefense_with_answer)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 include_directories(.)
 include_directories(Resource)
@@ -94,6 +94,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Scene/SettingsScene.hpp
         # UI/Component/TextInput.cpp
         # UI/Component/TextInput.hpp
+
+        DebugMacro.hpp
 )
 
 IF (WIN32)

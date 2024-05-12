@@ -20,6 +20,7 @@
 PlayScene* Enemy::getPlayScene() {
 	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
 }
+
 void Enemy::OnExplode() {
 	getPlayScene()->EffectGroup->AddNewObject(new ExplosionEffect(Position.x, Position.y));
 	std::random_device dev;
@@ -31,11 +32,13 @@ void Enemy::OnExplode() {
 		getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect("play/dirty-" + std::to_string(distId(rng)) + ".png", dist(rng), Position.x, Position.y));
 	}
 }
+
 Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) :
 	Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money) {
 	CollisionRadius = radius;
 	reachEndTime = 0;
 }
+
 void Enemy::Hit(float damage) {
 	hp -= damage;
 	if (hp <= 0) {
@@ -50,13 +53,16 @@ void Enemy::Hit(float damage) {
 		AudioHelper::PlayAudio("explosion.wav");
 	}
 }
+
 void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 	int x = static_cast<int>(floor(Position.x / PlayScene::BlockSize));
 	int y = static_cast<int>(floor(Position.y / PlayScene::BlockSize));
+
 	if (x < 0) x = 0;
 	if (x >= PlayScene::MapWidth) x = PlayScene::MapWidth - 1;
 	if (y < 0) y = 0;
 	if (y >= PlayScene::MapHeight) y = PlayScene::MapHeight - 1;
+	
 	Engine::Point pos(x, y);
 	int num = mapDistance[y][x];
 	if (num == -1) {
@@ -73,6 +79,7 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 				continue;
 			nextHops.emplace_back(x, y);
 		}
+		// There might be multiple shortest path to the end point
 		// Choose arbitrary one.
 		std::random_device dev;
 		std::mt19937 rng(dev());

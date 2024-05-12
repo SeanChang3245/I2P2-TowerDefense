@@ -9,9 +9,10 @@
 #include "Scene/WinScene.hpp"
 #include "Scene/StartScene.h"
 #include "Scene/SettingsScene.hpp"
+#include "DebugMacro.hpp"
 
 int main(int argc, char **argv) {
-	Engine::LOG::SetConfig(true);
+	Engine::LOG::SetConfig(true, PRINT_LOG_VERBOSE);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
     // TODO: [HACKATHON-1-SCENE] (3/4): Register Scenes here

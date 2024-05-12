@@ -2,7 +2,8 @@
     "files.associations": {
         "memory": "cpp",
         "utility": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "vector": "cpp"
     },
     "C_Cpp.default.compilerPath": "C:\\llvm-mingw-20231128-msvcrt-x86_64\\bin\\clang.exe"
 }

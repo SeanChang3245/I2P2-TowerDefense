@@ -20,9 +20,9 @@ namespace Engine {
 class PlayScene final : public Engine::IScene {
 private:
 	enum TileType {
-		TILE_DIRT,
-		TILE_FLOOR,
-		TILE_OCCUPIED,
+		TILE_DIRT, // enemy can walk     
+		TILE_FLOOR, // enemy can not walk 
+		TILE_OCCUPIED, // tile occupied by turret
 	};
 	ALLEGRO_SAMPLE_ID bgmId;
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> deathBGMInstance;
@@ -60,7 +60,7 @@ public:
 	std::vector<std::vector<int>> mapDistance;
 	std::list<std::pair<int, float>> enemyWaveData;
 	
-	/// @brief store previous key strokes
+	/// @brief store previous key strokes, use to activate cheat code
 	std::list<int> keyStrokes;
 	
 	static Engine::Point GetClientSize();
@@ -80,6 +80,8 @@ public:
 	void ReadEnemyWave();
 	void ConstructUI();
 	void UIBtnClicked(int id);
+
+	// check whether a turret can be placed at (x,y)
 	bool CheckSpaceValid(int x, int y);
 	std::vector<std::vector<int>> CalculateBFSDistance();
 	// void ModifyReadMapTiles();

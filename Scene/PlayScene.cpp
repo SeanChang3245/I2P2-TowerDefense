@@ -25,6 +25,7 @@
 #include "Enemy/TankEnemy.hpp"
 #include "Turret/TurretButton.hpp"
 #include "Engine/LOG.hpp"
+#include "DebugMacro.hpp"
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = { Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1) };
@@ -230,11 +231,11 @@ void PlayScene::OnMouseUp(int button, int mx, int my) {
 		return;
 	const int x = mx / BlockSize;
 	const int y = my / BlockSize;
-	if (button & 1) {
-		if (mapState[y][x] != TILE_OCCUPIED) {
+	if (button == 1) { // left click
+		if (mapState[y][x] != TILE_OCCUPIED) { 
 			if (!preview)
 				return;
-			// Check if valid.
+			// Check if turret can be place at (x,y)
 			if (!CheckSpaceValid(x, y)) {
 				Engine::Sprite* sprite;
 				GroundEffectGroup->AddNewObject(sprite = new DirtyEffect("play/target-invalid.png", 1, x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2));
@@ -346,7 +347,7 @@ void PlayScene::ReadMap() {
 	mapState = std::vector<std::vector<TileType>>(MapHeight, std::vector<TileType>(MapWidth));
 	for (int i = 0; i < MapHeight; i++) {
 		for (int j = 0; j < MapWidth; j++) {
-			const int num = mapData[i * MapWidth + j];
+			const bool num = mapData[i * MapWidth + j];
 			mapState[i][j] = num ? TILE_FLOOR : TILE_DIRT;
 			if (num)
 				TileMapGroup->AddNewObject(new Engine::Image("play/floor.png", j * BlockSize, i * BlockSize, BlockSize, BlockSize));
@@ -367,17 +368,9 @@ void PlayScene::ReadEnemyWave() {
 	enemyWaveData.clear();
 	std::ifstream fin(filename);
 	while (fin >> type && fin >> wait && fin >> repeat) {
-		std::cout << "getting enemy data\n";
 		for (int i = 0; i < repeat; i++)
 			enemyWaveData.emplace_back(type, wait);
 	}
-
-	std::cout << "enemyWaveData:\n";
-	for(auto p : enemyWaveData)
-	{
-		std::cout << p.first << ' ' << p.second << '\n';
-	}
-
 	fin.close();
 }
 void PlayScene::ConstructUI() {
@@ -439,14 +432,19 @@ void PlayScene::UIBtnClicked(int id) {
 	OnMouseMove(Engine::GameEngine::GetInstance().GetMousePosition().x, Engine::GameEngine::GetInstance().GetMousePosition().y);
 }
 
-bool PlayScene::CheckSpaceValid(int x, int y) {
+bool PlayScene::CheckSpaceValid(int x, int y) 
+{
+	// a turret can be placed on TILE_DIRT or TILE_FLOOR
+
 	if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
 		return false;
-	auto map00 = mapState[y][x];
+	TileType map00 = mapState[y][x];
+
+	// assume a turret has been placed, will it blocks enemy's path
 	mapState[y][x] = TILE_OCCUPIED;
 	std::vector<std::vector<int>> map = CalculateBFSDistance();
 	mapState[y][x] = map00;
-	if (map[0][0] == -1)
+	if (map[0][0] == -1) // the path from start point to end point is blocked
 		return false;
 	for (auto& it : EnemyGroup->GetObjects()) {
 		Engine::Point pnt;
@@ -456,17 +454,18 @@ bool PlayScene::CheckSpaceValid(int x, int y) {
 		if (pnt.x >= MapWidth) pnt.x = MapWidth - 1;
 		if (pnt.y < 0) pnt.y = 0;
 		if (pnt.y >= MapHeight) pnt.y = MapHeight - 1;
-		if (map[pnt.y][pnt.x] == -1)
+		if (map[pnt.y][pnt.x] == -1) // the turrect is placed on a enemy
 			return false;
 	}
-	// All enemy have path to exit.
+	// All enemy have path to exit, hence the turrect can be placed at (x,y)
 	mapState[y][x] = TILE_OCCUPIED;
 	mapDistance = map;
 	for (auto& it : EnemyGroup->GetObjects())
 		dynamic_cast<Enemy*>(it)->UpdatePath(mapDistance);
 	return true;
 }
-std::vector<std::vector<int>> PlayScene::CalculateBFSDistance() {
+
+std::vector<std::vector<int>> PlayScene::CalculateBFSDistance() {	
 	// Reverse BFS to find path.
 	std::vector<std::vector<int>> map(MapHeight, std::vector<int>(std::vector<int>(MapWidth, -1)));
 	std::queue<Engine::Point> que;
@@ -476,12 +475,47 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance() {
 		return map;
 	que.push(Engine::Point(MapWidth - 1, MapHeight - 1));
 	map[MapHeight - 1][MapWidth - 1] = 0;
+
+	int cur_dist = 0;
 	while (!que.empty()) {
-		Engine::Point p = que.front();
-		que.pop();
 		// TODO: [BFS PathFinding] (1/1): Implement a BFS starting from the most right-bottom block in the map.
 		//               For each step you should assign the corresponding distance to the most right-bottom block.
-		//               mapState[y][x] is TILE_DIRT if it is empty.
+		//               mapState[y][x] is TILE_DIRT if it is empty.	
+		int s = que.size();
+		while(s--)
+		{
+			Engine::Point p = que.front();
+			que.pop();
+			
+			for(const auto &dir : directions)
+			{
+				int nextX = (dir+p).x;
+				int nextY = (dir+p).y;
+
+				if(nextX < 0 || nextX >= MapWidth || 
+					nextY < 0 || nextY >= MapHeight || 
+					mapState[nextY][nextX] == TILE_FLOOR || 
+					mapState[nextY][nextX] == TILE_OCCUPIED ||
+					map[nextY][nextX] != -1) // the tile is floor but its shortest distance has been updated
+					continue;
+				
+				map[nextY][nextX] = cur_dist + 1;
+				que.emplace(Engine::Point(nextX, nextY));
+			}
+		}
+		++cur_dist;
 	}
+
+	if(PRINT_MAP_DISTANCE)
+	{
+		Engine::LOG(Engine::INFO) << "map distance information";
+		for(const auto &v : map)
+		{
+			for(const auto &dist : v)
+				std::cout << dist << ' ';
+			std::cout << '\n';
+		}
+	}
+
 	return map;
 }
