@@ -14,16 +14,14 @@
 #include "Engine/Point.hpp"
 #include "Engine/LOG.hpp"
 
-using P = std::pair<ScoreboardData, Engine::Group*>;
-std::ifstream& operator>>(std::ifstream& fin, ScoreboardData& data)
+using P = std::pair<ScoreboardData, Engine::Group *>;
+std::ifstream &operator>>(std::ifstream &fin, ScoreboardData &data)
 {
-    fin >> data.player_name >> data.score >> data.date;
+	fin >> data.player_name >> data.score >> data.date;
 	return fin;
 }
 
-
-
-void ScoreboardScene::Initialize() 
+void ScoreboardScene::Initialize()
 {
 	Engine::LOG(Engine::INFO) << "enter scoreboard scene init";
 
@@ -33,8 +31,8 @@ void ScoreboardScene::Initialize()
 	int halfH = h / 2;
 
 	AddNewObject(new Engine::Label("Scoreboard", "pirulen.ttf", 48, halfW, halfH / 5, 0, 255, 0, 255, 0.5, 0.5));
-	
-	Engine::ImageButton* btn;
+
+	Engine::ImageButton *btn;
 	btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW - 200, halfH * 7 / 4 - 50, 400, 100);
 	btn->SetOnClickCallback(std::bind(&ScoreboardScene::BackOnClick, this));
 	AddNewControlObject(btn);
@@ -50,11 +48,10 @@ void ScoreboardScene::Initialize()
 	AddNewControlObject(btn);
 	AddNewObject(new Engine::Label("Next Page", "pirulen.ttf", 48, halfW + 500, halfH * 7 / 4, 0, 0, 0, 255, 0.5, 0.5));
 
-	btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW-100, halfH / 5 + 40, 200, 50);
+	btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW - 100, halfH / 5 + 40, 200, 50);
 	btn->SetOnClickCallback(std::bind(&ScoreboardScene::SortOnClick, this));
 	AddNewControlObject(btn);
 	AddNewObject(new Engine::Label("sort", "pirulen.ttf", 36, halfW, halfH / 5 + 65, 0, 0, 0, 255, 0.5, 0.5));
-
 
 	AddNewObject(UIScoreboard = new Group());
 	init_sorting_comparators();
@@ -63,23 +60,25 @@ void ScoreboardScene::Initialize()
 	bgmInstance = AudioHelper::PlaySample("select.ogg", true, AudioHelper::BGMVolume);
 }
 
-void ScoreboardScene::Terminate() {
+void ScoreboardScene::Terminate()
+{
 	Engine::LOG(Engine::INFO) << "terminate scoreboard scene";
-	
+
 	data_ptr_pairs.clear();
 	AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
-	IScene::Terminate();	
+	IScene::Terminate();
 }
 
-void ScoreboardScene::BackOnClick() {
+void ScoreboardScene::BackOnClick()
+{
 	Engine::GameEngine::GetInstance().ChangeScene("stage-select");
 }
 
+// change currentcmp
+// clear all object in UI group, data_ptr_pair
 void ScoreboardScene::SortOnClick()
 {
-	// change currentcmp
-	// clear all object in UI group, data_ptr_pair
 	current_cmp = (current_cmp + 1) % cmps.size();
 	UIScoreboard->Clear();
 	sort(data_ptr_pairs.begin(), data_ptr_pairs.end(), cmps[current_cmp]);
@@ -87,29 +86,28 @@ void ScoreboardScene::SortOnClick()
 	update_element_visible();
 }
 
-void ScoreboardScene::PrevOnClick() 
+void ScoreboardScene::PrevOnClick()
 {
 	scoreboard_start -= 5;
 	scoreboard_start = std::max(0, scoreboard_start);
 	update_element_visible();
 }
 
-void ScoreboardScene::NextOnClick() 
+void ScoreboardScene::NextOnClick()
 {
 	scoreboard_start += 5;
 	scoreboard_start = std::min(scoreboard_start, (int)data_ptr_pairs.size() / 5 * 5);
 	update_element_visible();
 }
 
-
 void ScoreboardScene::init_scoreboard_data()
 {
-    std::string filename = std::string("Resource/scoreboard.txt");
-    std::ifstream fin(filename);
+	std::string filename = std::string("Resource/scoreboard.txt");
+	std::ifstream fin(filename);
 
-    ScoreboardData tmp;
-    while(fin >> tmp)
-        data_ptr_pairs.emplace_back(tmp, nullptr);
+	ScoreboardData tmp;
+	while (fin >> tmp)
+		data_ptr_pairs.emplace_back(tmp, nullptr);
 
 	sort(data_ptr_pairs.begin(), data_ptr_pairs.end(), cmps[current_cmp]);
 	generate_all_row_element();
@@ -121,7 +119,7 @@ void ScoreboardScene::generate_all_row_element()
 	num_of_record = data_ptr_pairs.size();
 	scoreboard_start = 0;
 	UIScoreboard->AddNewObject(create_row_group_element("name", "score", "date", 0));
-	for(int i = 0; i < data_ptr_pairs.size(); ++i)
+	for (int i = 0; i < data_ptr_pairs.size(); ++i)
 	{
 		auto data = data_ptr_pairs[i].first;
 		data_ptr_pairs[i].second = create_row_group_element(data.player_name, data.score, data.date, i % 5 + 1);
@@ -132,22 +130,22 @@ void ScoreboardScene::generate_all_row_element()
 // update which row group should be visible
 void ScoreboardScene::update_element_visible()
 {
-	for(const auto &[data, group] : data_ptr_pairs)
+	for (const auto &[data, group] : data_ptr_pairs)
 		group->Visible = false;
-	
-	for(int i = scoreboard_start; i < std::min(scoreboard_start + 5, num_of_record); ++i)
+
+	for (int i = scoreboard_start; i < std::min(scoreboard_start + 5, num_of_record); ++i)
 		data_ptr_pairs[i].second->Visible = true;
 }
 
-Engine::Group* ScoreboardScene::create_row_group_element(std::string first, std::string second, std::string third, int offset)
+Engine::Group *ScoreboardScene::create_row_group_element(std::string first, std::string second, std::string third, int offset)
 {
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
 	int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
 
-	Group* retp = new Group();
-	retp->AddNewObject(new Engine::Label(first, "pirulen.ttf", 48, w * 1/4, h * 1 / 4 + offset*75, 0, 255, 0, 200, 0.5, 0.5));
-	retp->AddNewObject(new Engine::Label(second, "pirulen.ttf", 48, w * 2/4, h * 1 / 4 + offset*75, 0, 255, 0, 200, 0.5, 0.5));
-	retp->AddNewObject(new Engine::Label(third, "pirulen.ttf", 48, w * 3/4, h * 1 / 4 + offset*75, 0, 255, 0, 200, 0.5, 0.5));
+	Group *retp = new Group();
+	retp->AddNewObject(new Engine::Label(first, "pirulen.ttf", 48, w * 1 / 4, h * 1 / 4 + offset * 75, 0, 255, 0, 200, 0.5, 0.5));
+	retp->AddNewObject(new Engine::Label(second, "pirulen.ttf", 48, w * 2 / 4, h * 1 / 4 + offset * 75, 0, 255, 0, 200, 0.5, 0.5));
+	retp->AddNewObject(new Engine::Label(third, "pirulen.ttf", 48, w * 3 / 4, h * 1 / 4 + offset * 75, 0, 255, 0, 200, 0.5, 0.5));
 
 	return retp;
 }
@@ -156,33 +154,32 @@ Engine::Group* ScoreboardScene::create_row_group_element(std::string first, std:
 	sorting comparators
 ================================================================================================== */
 
-
-bool ascending_date(const P& lhs, const P& rhs)
+static bool ascending_date(const P &lhs, const P &rhs)
 {
 	return lhs.first.date < rhs.first.date;
 }
 
-bool descending_date(const P& lhs, const P& rhs)
+static bool descending_date(const P &lhs, const P &rhs)
 {
 	return lhs.first.date > rhs.first.date;
 }
 
-bool ascending_name(const P& lhs, const P& rhs)
+static bool ascending_name(const P &lhs, const P &rhs)
 {
 	return lhs.first.player_name < rhs.first.player_name;
 }
 
-bool descending_name(const P& lhs, const P& rhs)
+static bool descending_name(const P &lhs, const P &rhs)
 {
 	return lhs.first.player_name > rhs.first.player_name;
 }
 
-bool ascending_score(const P& lhs, const P& rhs)
+static bool ascending_score(const P &lhs, const P &rhs)
 {
 	return lhs.first.score < rhs.first.score;
 }
 
-bool descending_score(const P& lhs, const P& rhs)
+static bool descending_score(const P &lhs, const P &rhs)
 {
 	return lhs.first.score > rhs.first.score;
 }

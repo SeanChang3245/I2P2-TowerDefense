@@ -37,9 +37,13 @@ private:
     // specify the sorting comparator use for sorting the data
     int current_cmp;
 
+    // assign all kinds of comparator to the array of comparator, "cmps"
     void init_sorting_comparators();
+    // read in data_ptr_pairs, and render the initial scoreboard using ascending_date comparator
     void init_scoreboard_data();
+    // change row_group_element's visibility depending on scoreboard_start
     void update_element_visible();
+    // from empty UIScoreboard, create all row element base on their order in the data_ptr_pairs
     void generate_all_row_element();
     Group *create_row_group_element(std::string first, std::string second, std::string third, int offset);
 
