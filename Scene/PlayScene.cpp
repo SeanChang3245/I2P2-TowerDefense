@@ -58,6 +58,7 @@ void PlayScene::Initialize() {
 	money = 150;
 	SpeedMult = 1;
 	
+	// a scene is a Group, so there is a vector of object in the scene
 	// Add groups from bottom to top.
 	AddNewObject(TileMapGroup = new Group());
 	AddNewObject(GroundEffectGroup = new Group());

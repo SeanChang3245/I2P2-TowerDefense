@@ -2,6 +2,7 @@
 #include <functional>
 #include <memory>
 
+#include "Engine/LOG.hpp"
 #include "Engine/AudioHelper.hpp"
 #include "Engine/GameEngine.hpp"
 #include "UI/Component/ImageButton.hpp"
@@ -45,20 +46,11 @@ void SettingsScene::Initialize() {
     sliderBGM->SetValue(AudioHelper::BGMVolume);
     sliderSFX->SetValue(AudioHelper::SFXVolume);
 
-    
-    
-    // btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", halfW - 200, halfH / 2 - 50, 400, 100);
-    // btn->SetOnClickCallback(std::bind(&SettingsScene::PlayOnClick, this, 1));
-    // AddNewControlObject(btn);
-    // AddNewObject(new Engine::Label("Stage 1", "pirulen.ttf", 48, halfW, halfH / 2, 0, 0, 0, 255, 0.5, 0.5));
-
-    // btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", halfW - 200, halfH * 3 / 2 - 50, 400, 100);
-    // btn->SetOnClickCallback(std::bind(&SettingsScene::PlayOnClick, this, 2));
-    // AddNewControlObject(btn);
-    // AddNewObject(new Engine::Label("Stage 2", "pirulen.ttf", 48, halfW, halfH * 3 / 2, 0, 0, 0, 255, 0.5, 0.5));
+    Engine::LOG(Engine::INFO) << "enter setting scene initialize";
 }
 
 void SettingsScene::Terminate() {
+    Engine::LOG(Engine::INFO) << "terminate setting scene";
     AudioHelper::StopSample(bgmInstance);
     bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
     IScene::Terminate();

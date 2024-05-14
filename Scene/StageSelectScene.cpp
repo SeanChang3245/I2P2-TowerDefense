@@ -12,6 +12,7 @@
 #include "Engine/Resources.hpp"
 #include "UI/Component/Slider.hpp"
 #include "StageSelectScene.hpp"
+#include "Engine/LOG.hpp"
 
 void StageSelectScene::Initialize() {
     int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
@@ -42,6 +43,7 @@ void StageSelectScene::Initialize() {
 	bgmInstance = AudioHelper::PlaySample("select.ogg", true, AudioHelper::BGMVolume);
 }
 void StageSelectScene::Terminate() {
+    Engine::LOG(Engine::INFO) << "terminate stage select scene";
 	AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
 	IScene::Terminate();

@@ -74,6 +74,7 @@ namespace Engine {
 		/// Draw to window display.
 		/// This is called when the game should redraw the window.
 		/// Delegate the draw event to all visible objects.
+		/// Group is also an object, so it will recursively call draw till the object is an IObject
 		/// </summary>
 		void Draw() const override;
 		/// <summary>

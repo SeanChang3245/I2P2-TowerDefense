@@ -39,7 +39,7 @@ namespace Engine {
 		}
 	}
 	void Group::Draw() const {
-		for (auto& it : objects) {
+		for (auto& it : objects) { 
 			if (it.second->Visible)
 				it.second->Draw();
 		}
