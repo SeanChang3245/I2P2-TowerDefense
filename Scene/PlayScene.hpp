@@ -29,6 +29,7 @@ private:
 protected:
 	int lives;
 	int money;
+	int total_score;
 	int SpeedMult;
 public:
 	static bool DebugMode;
@@ -52,6 +53,7 @@ public:
 	Group* EffectGroup;
 	Group* UIGroup;
 	Engine::Label* UIMoney;
+	Engine::Label* UIScore;
 	Engine::Label* UILives;
 	Engine::Image* imgTarget;
 	Engine::Sprite* dangerIndicator;
@@ -75,7 +77,9 @@ public:
 	void OnKeyDown(int keyCode) override;
 	void Hit();
 	int GetMoney() const;
+	int GetScore() const;
 	void EarnMoney(int money);
+	void EarnScore(int score);
 	void ReadMap();
 	void ReadEnemyWave();
 	void ConstructUI();

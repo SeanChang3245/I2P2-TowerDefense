@@ -84,6 +84,9 @@ void ScoreboardScene::SortOnClick()
 	sort(data_ptr_pairs.begin(), data_ptr_pairs.end(), cmps[current_cmp]);
 	generate_all_row_element();
 	update_element_visible();
+
+	Engine::LOG(Engine::INFO) << "row numbers: " << data_ptr_pairs.size();
+	Engine::LOG(Engine::INFO) << "current cmp: " << current_cmp;
 }
 
 void ScoreboardScene::PrevOnClick()
@@ -96,7 +99,7 @@ void ScoreboardScene::PrevOnClick()
 void ScoreboardScene::NextOnClick()
 {
 	scoreboard_start += 5;
-	scoreboard_start = std::min(scoreboard_start, (int)data_ptr_pairs.size() / 5 * 5);
+	scoreboard_start = std::min(scoreboard_start, ((int)data_ptr_pairs.size()-1) / 5 * 5);
 	update_element_visible();
 }
 
@@ -176,12 +179,16 @@ static bool descending_name(const P &lhs, const P &rhs)
 
 static bool ascending_score(const P &lhs, const P &rhs)
 {
-	return lhs.first.score < rhs.first.score;
+	int lv  = atoi(lhs.first.score.c_str());
+	int rv  = atoi(rhs.first.score.c_str());
+	return lv < rv;
 }
 
 static bool descending_score(const P &lhs, const P &rhs)
 {
-	return lhs.first.score > rhs.first.score;
+	int lv  = atoi(lhs.first.score.c_str());
+	int rv  = atoi(rhs.first.score.c_str());
+	return lv > rv;
 }
 
 void ScoreboardScene::init_sorting_comparators()

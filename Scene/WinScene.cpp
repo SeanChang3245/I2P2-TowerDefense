@@ -18,7 +18,7 @@ void WinScene::Initialize() {
 	int halfH = h / 2;
 
 	AddNewObject(new Engine::Image("win/benjamin-sad.png", halfW, halfH, 0, 0, 0.5, 0.5));
-	AddNewObject(new Engine::Label("You Win!", "pirulen.ttf", 48, halfW, halfH / 4 -10, 255, 255, 255, 255, 0.5, 0.5));
+	AddNewObject(new Engine::Label("You Win!", "pirulen.ttf", 48, halfW, halfH / 5, 255, 255, 255, 255, 0.5, 0.5));
 	
 	Engine::ImageButton* btn;
 	btn = new Engine::ImageButton("win/dirt.png", "win/floor.png", halfW - 200, halfH * 7 / 4 - 50, 400, 100);
@@ -27,6 +27,9 @@ void WinScene::Initialize() {
 	AddNewObject(new Engine::Label("Back", "pirulen.ttf", 48, halfW, halfH * 7 / 4, 0, 0, 0, 255, 0.5, 0.5));
 	
 	bgmId = AudioHelper::PlayAudio("win.wav");
+
+	input_block = new Engine::TextInputBlock(halfW, halfH / 4 + 50, 0, 0, 0, 255, 0.5, 0.5);
+	AddNewControlObject(input_block);
 }
 
 void WinScene::Terminate() 
@@ -45,5 +48,19 @@ void WinScene::Update(float deltaTime) {
 }
 
 void WinScene::BackOnClick() {
+	handleUserInput();
 	Engine::GameEngine::GetInstance().ChangeScene("stage-select");
+}
+
+void WinScene::OnKeyDown(int keyCode)
+{
+	input_block->OnKeyDown(keyCode);
+	if(keyCode == ALLEGRO_KEY_ENTER && input_block->get_text_length() > 0)
+		BackOnClick();
+}
+
+void WinScene::handleUserInput()
+{
+	int final_score = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"))->GetScore();
+	input_block->save_input_to_file(final_score);
 }

@@ -48,6 +48,7 @@ void Enemy::Hit(float damage) {
 			it->Target = nullptr;
 		for (auto& it: lockedBullets)
 			it->Target = nullptr;
+		getPlayScene()->EarnScore(score);
 		getPlayScene()->EarnMoney(money);
 		getPlayScene()->EnemyGroup->RemoveObject(objectIterator);
 		AudioHelper::PlayAudio("explosion.wav");
@@ -123,10 +124,16 @@ void Enemy::Update(float deltaTime) {
 	Rotation = atan2(Velocity.y, Velocity.x);
 	Sprite::Update(deltaTime);
 }
+
 void Enemy::Draw() const {
 	Sprite::Draw();
 	if (PlayScene::DebugMode) {
 		// Draw collision radius.
 		al_draw_circle(Position.x, Position.y, CollisionRadius, al_map_rgb(255, 0, 0), 2);
 	}
+}
+
+int Enemy::get_kill_score() const
+{
+	return this->score;
 }
