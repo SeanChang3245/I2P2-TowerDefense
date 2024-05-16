@@ -58,8 +58,12 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         main.cpp
         Bullet/MissileBullet.cpp
         Bullet/MissileBullet.hpp
+        Bullet/AdvancedMissileBullet.cpp
+        Bullet/AdvancedMissileBullet.hpp
         Turret/MissileTurret.cpp
         Turret/MissileTurret.hpp
+        Turret/AdvancedMissileTurret.cpp
+        Turret/AdvancedMissileTurret.hpp
         UI/Animation/Plane.cpp
         UI/Animation/Plane.hpp
         Enemy/PlaneEnemy.cpp
@@ -74,6 +78,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         UI/Component/Slider.hpp
         Enemy/SoldierEnemy.cpp
         Enemy/SoldierEnemy.hpp
+        Enemy/AdvancedTankEnemy.cpp
+        Enemy/AdvancedTankEnemy.hpp
         Engine/Sprite.cpp
         Engine/Sprite.hpp
         Scene/StageSelectScene.cpp

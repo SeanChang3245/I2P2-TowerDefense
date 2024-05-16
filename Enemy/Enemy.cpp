@@ -48,7 +48,7 @@ void Enemy::Hit(float damage) {
 			it->Target = nullptr;
 		for (auto& it: lockedBullets)
 			it->Target = nullptr;
-		getPlayScene()->EarnScore(score);
+		getPlayScene()->EarnScore(kill_score);
 		getPlayScene()->EarnMoney(money);
 		getPlayScene()->EnemyGroup->RemoveObject(objectIterator);
 		AudioHelper::PlayAudio("explosion.wav");
@@ -135,5 +135,5 @@ void Enemy::Draw() const {
 
 int Enemy::get_kill_score() const
 {
-	return this->score;
+	return this->kill_score;
 }

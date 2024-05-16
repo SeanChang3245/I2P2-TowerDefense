@@ -17,7 +17,7 @@ protected:
 	float speed;
 	float hp;
 	int money;
-	int score;
+	int kill_score;
 	PlayScene* getPlayScene();
 	virtual void OnExplode();
 public:

@@ -8,7 +8,7 @@
 TankEnemy::TankEnemy(int x, int y) : Enemy("play/enemy-3.png", x, y, 20, 20, 100, 50),
 	head("play/enemy-3-head.png", x, y), targetRotation(0) 
 {
-	score = 200;
+	kill_score = 200;
 }
 
 void TankEnemy::Draw() const {

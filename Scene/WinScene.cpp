@@ -48,6 +48,8 @@ void WinScene::Update(float deltaTime) {
 }
 
 void WinScene::BackOnClick() {
+	if(input_block->get_text_length() == 0)
+		return;
 	handleUserInput();
 	Engine::GameEngine::GetInstance().ChangeScene("stage-select");
 }

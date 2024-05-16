@@ -17,12 +17,14 @@
 #include "Turret/LaserTurret.hpp"
 #include "Turret/MachineGunTurret.hpp"
 #include "Turret/MissileTurret.hpp"
+#include "Turret/AdvancedMissileTurret.hpp"
 #include "UI/Animation/Plane.hpp"
 #include "Enemy/PlaneEnemy.hpp"
 #include "PlayScene.hpp"
 #include "Engine/Resources.hpp"
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
+#include "Enemy/AdvancedTankEnemy.hpp"
 #include "Turret/TurretButton.hpp"
 #include "Engine/LOG.hpp"
 #include "DebugMacro.hpp"
@@ -175,7 +177,10 @@ void PlayScene::Update(float deltaTime) {
 		case 3:
 			EnemyGroup->AddNewObject(enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
 			break;
-        // TODO: [CUSTOM-ENEMY]: You need to modify 'Resource/enemy1.txt', or 'Resource/enemy2.txt' to spawn the 4th enemy.
+		case 4:
+			EnemyGroup->AddNewObject(enemy = new AdvancedTankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+			break;
+		// TODO: [CUSTOM-ENEMY]: You need to modify 'Resource/enemy1.txt', or 'Resource/enemy2.txt' to spawn the 4th enemy.
         //         The format is "[EnemyId] [TimeDelay] [Repeat]".
         // TODO: [CUSTOM-ENEMY]: Enable the creation of the enemy.
 		default:
@@ -208,7 +213,7 @@ void PlayScene::Draw() const {
 	}
 }
 void PlayScene::OnMouseDown(int button, int mx, int my) {
-	if ((button & 1) && !imgTarget->Visible && preview) {
+	if ((button == 1) && !imgTarget->Visible && preview) {
 		// Cancel turret construct.
 		UIGroup->RemoveObject(preview->GetObjectIterator());
 		preview = nullptr;
@@ -302,6 +307,10 @@ void PlayScene::OnKeyDown(int keyCode) {
 	else if (keyCode == ALLEGRO_KEY_E) {
 		// Hotkey for MissileTurret.
 		UIBtnClicked(2);
+	}
+	else if (keyCode == ALLEGRO_KEY_R) {
+		// Hotkey for AdvancedMissileTurret.
+		UIBtnClicked(3);
 	}
 	// TODO: [CUSTOM-TURRET]: Make specific key to create the turret.
 	else if (keyCode >= ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9) {
@@ -422,6 +431,14 @@ void PlayScene::ConstructUI() {
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 2));
 	UIGroup->AddNewControlObject(btn);
 	
+	// Button 4
+	btn = new TurretButton("play/floor.png", "play/dirt.png",
+		Engine::Sprite("play/tower-base.png", 1522, 176, 0, 0, 0, 0),
+		Engine::Sprite("play/turret-6.png", 1522, 176, 0, 0, 0, 0)
+		, 1522, 176, AdvancedMissileTurret::Price);
+	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
+	UIGroup->AddNewControlObject(btn);
+
 	// TODO: [CUSTOM-TURRET]: Create a button to support constructing the turret.
 	
 	
@@ -443,6 +460,9 @@ void PlayScene::UIBtnClicked(int id) {
 		preview = new LaserTurret(0, 0);
 	else if (id == 2 && money >= MissileTurret::Price)
 		preview = new MissileTurret(0, 0);
+	else if(id == 3 && money >= AdvancedMissileTurret::Price)
+		preview = new AdvancedMissileTurret(0, 0);
+
 	if (!preview)
 		return;
 	preview->Position = Engine::GameEngine::GetInstance().GetMousePosition();
