@@ -1,0 +1,42 @@
+#include <allegro5/color.h>
+#include <string>
+
+#include "Engine/GameEngine.hpp"
+#include "Engine/IScene.hpp"
+#include "Scene/PlayScene.hpp"
+#include "HoverTurretButton.hpp"
+
+
+PlayScene* HoverTurretButton::getPlayScene() {
+	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
+}
+
+HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine::Sprite Base, Engine::Sprite Turret, 
+			float img_x, float img_y,
+			float inf_x, float inf_y, float inf_w, float inf_h,
+			unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
+			int cost, int range, int damage) :
+		money(cost), Base(Base), Turret(Turret),
+		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, inf_w, inf_h, r, g, b, a)
+{
+	AddNewInformation("Cost: " + std::to_string(cost));
+	AddNewInformation("Range: " + std::to_string(range));
+	AddNewInformation("Damage: " + std::to_string(damage));
+}
+
+void HoverTurretButton::Update(float deltaTime) {
+	HoverImageButton::Update(deltaTime);
+	if (getPlayScene()->GetMoney() >= money) {
+		Enabled = true;
+		Base.Tint = Turret.Tint = al_map_rgba(255, 255, 255, 255);
+	} else {
+		Enabled = false;
+		Base.Tint = Turret.Tint = al_map_rgba(0, 0, 0, 160);
+	}
+}
+
+void HoverTurretButton::Draw() const {
+	HoverImageButton::Draw();
+	Base.Draw();
+	Turret.Draw();
+}

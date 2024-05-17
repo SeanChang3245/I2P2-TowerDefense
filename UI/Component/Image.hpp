@@ -10,7 +10,7 @@ namespace Engine {
 	/// <summary>
 	/// A simple static image object.
 	/// </summary>
-	class Image : public IObject {
+	class Image : public Engine::IObject {
 	public:
 		// Smart pointer to bitmap.
 		std::shared_ptr<ALLEGRO_BITMAP> bmp;

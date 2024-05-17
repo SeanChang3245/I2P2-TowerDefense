@@ -27,7 +27,9 @@
 #include "Enemy/AdvancedTankEnemy.hpp"
 #include "Turret/TurretButton.hpp"
 #include "Engine/LOG.hpp"
+#include "Turret/HoverTurretButton.hpp"
 #include "DebugMacro.hpp"
+#include "Bullet/FireBullet.hpp"
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = { Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1) };
@@ -439,6 +441,18 @@ void PlayScene::ConstructUI() {
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
 	UIGroup->AddNewControlObject(btn);
 
+
+	// test hoverimage button
+	HoverTurretButton* btn2;
+	btn2 = new HoverTurretButton("play/floor.png", "play/dirt.png", 
+		Engine::Sprite("play/tower-base.png", 1294, 252, 0, 0, 0, 0), 
+		Engine::Sprite("play/turret-1.png", 1294, 252-8, 0, 0, 0, 0),
+		1294, 252, 
+		1294, 400, 100, 200, 
+		0, 0, 0, 255,
+		MachineGunTurret::Price, MachineGunTurret::Range, MachineGunTurret::Damage);
+	btn2->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
+	UIGroup->AddNewControlObject(btn2);
 	// TODO: [CUSTOM-TURRET]: Create a button to support constructing the turret.
 	
 	
@@ -462,6 +476,8 @@ void PlayScene::UIBtnClicked(int id) {
 		preview = new MissileTurret(0, 0);
 	else if(id == 3 && money >= AdvancedMissileTurret::Price)
 		preview = new AdvancedMissileTurret(0, 0);
+	else if(id == 4 && money >= MachineGunTurret::Price)
+		preview = new MachineGunTurret(0, 0);
 
 	if (!preview)
 		return;

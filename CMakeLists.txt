@@ -39,6 +39,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         UI/Component/Image.hpp
         UI/Component/ImageButton.cpp
         UI/Component/ImageButton.hpp
+        UI/Component/HoverImageButton.cpp
+        UI/Component/HoverImageButton.hpp
         Engine/IObject.cpp
         Engine/IObject.hpp
         Engine/IScene.cpp
@@ -90,6 +92,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Turret/Turret.hpp
         Turret/TurretButton.cpp
         Turret/TurretButton.hpp
+        Turret/HoverTurretButton.cpp
+        Turret/HoverTurretButton.hpp
         Scene/WinScene.cpp
         Scene/WinScene.hpp
 

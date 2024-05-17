@@ -4,6 +4,8 @@
 
 class MachineGunTurret: public Turret {
 public:
+	static const int Damage;
+	static const int Range;
 	static const int Price;
     MachineGunTurret(float x, float y);
 	void CreateBullet() override;

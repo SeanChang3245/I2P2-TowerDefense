@@ -12,7 +12,7 @@ namespace Engine {
 	/// <summary>
 	/// A clickable button, changes image when mouse move.
 	/// </summary>
-	class ImageButton: public Image, public IControl {
+	class ImageButton: public Engine::Image, public Engine::IControl {
 	protected:
 		// Determines whether mouse is in the button.
 		bool mouseIn = false;
@@ -57,4 +57,5 @@ namespace Engine {
 		void OnMouseMove(int mx, int my) override;
 	};
 }
+
 #endif // IMAGEBUTTON_HPP
