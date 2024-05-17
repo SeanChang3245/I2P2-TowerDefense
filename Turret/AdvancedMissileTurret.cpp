@@ -9,9 +9,14 @@
 #include "Scene/PlayScene.hpp"
 #include "Engine/Point.hpp"
 
+
 const int AdvancedMissileTurret::Price = 500;
+const int AdvancedMissileTurret::Range = 500;
+const int AdvancedMissileTurret::Damage = AdvancedMissileBullet::Damage;
+const float AdvancedMissileTurret::Reload = 2;
+
 AdvancedMissileTurret::AdvancedMissileTurret(float x, float y) :
-	Turret("play/tower-base.png", "play/turret-6.png", x, y, 500, Price, 2) {
+	Turret("play/tower-base.png", "play/turret-6.png", x, y, Range, Price, Reload) {
 }
 
 void AdvancedMissileTurret::CreateBullet() {

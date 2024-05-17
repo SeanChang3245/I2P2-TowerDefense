@@ -17,10 +17,10 @@ public:
     Engine::Sprite Turret;
 
     HoverTurretButton(std::string img, std::string imgIn, Engine::Sprite Base, Engine::Sprite Turret, 
-            float img_x, float img_y,
-            float inf_x, float inf_y, float inf_w, float inf_h,
+            int img_x, int img_y,
+            int inf_x, int inf_y,
             unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
-            int cost, int range, int damage);
+            int cost, int range, int damage, float reload);
 	void Update(float deltaTime) override;
 	void Draw() const override;
 };

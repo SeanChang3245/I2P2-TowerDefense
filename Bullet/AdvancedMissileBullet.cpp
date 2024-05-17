@@ -13,8 +13,11 @@
 
 class Turret;
 
+const int AdvancedMissileBullet::Damage = 6;
+const int AdvancedMissileBullet::Speed = 300;
+
 AdvancedMissileBullet::AdvancedMissileBullet(Engine::Point position, Engine::Point forwardDirection, float rotation, Turret* parent) :
-	Bullet("play/bullet-4.png", 300, 6, position, forwardDirection, rotation + ALLEGRO_PI / 2, parent) {
+	Bullet("play/bullet-4.png", Speed, Damage, position, forwardDirection, rotation + ALLEGRO_PI / 2, parent) {
 }
 void AdvancedMissileBullet::Update(float deltaTime) {
 	if (!Target) {

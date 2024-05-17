@@ -7,7 +7,7 @@
 #include <list>
 #include <string>
 
-#define ROW_SPACING 30
+const int ROW_SPACING = 30;
 
 namespace Engine 
 {
@@ -22,20 +22,17 @@ namespace Engine
         // store all the detail Label 
         Group *informations;
         int num_of_row;
-        float information_x;
-        float information_y;
-        float information_w;
-        float information_h;
+        int information_x;
+        int information_y;
         unsigned char text_color_r;
         unsigned char text_color_g;
         unsigned char text_color_b;
         unsigned char text_color_a;
-        
 
     public:
 		explicit HoverImageButton(std::string img, std::string imgIn, 
-                float img_x, float img_y,
-                float inf_x , float inf_y, float inf_w, float inf_h,
+                int  img_x, int  img_y,
+                int  inf_x , int  inf_y,
                 unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
         void OnMouseMove(int mx, int my) override;

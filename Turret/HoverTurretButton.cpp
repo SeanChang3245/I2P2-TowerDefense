@@ -5,6 +5,7 @@
 #include "Engine/IScene.hpp"
 #include "Scene/PlayScene.hpp"
 #include "HoverTurretButton.hpp"
+#include "Engine/LOG.hpp"
 
 
 PlayScene* HoverTurretButton::getPlayScene() {
@@ -12,16 +13,17 @@ PlayScene* HoverTurretButton::getPlayScene() {
 }
 
 HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine::Sprite Base, Engine::Sprite Turret, 
-			float img_x, float img_y,
-			float inf_x, float inf_y, float inf_w, float inf_h,
+			int  img_x, int img_y,
+			int inf_x, int inf_y,
 			unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
-			int cost, int range, int damage) :
+			int cost, int range, int damage, float reload) :
 		money(cost), Base(Base), Turret(Turret),
-		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, inf_w, inf_h, r, g, b, a)
+		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, r, g, b, a)
 {
 	AddNewInformation("Cost: " + std::to_string(cost));
 	AddNewInformation("Range: " + std::to_string(range));
 	AddNewInformation("Damage: " + std::to_string(damage));
+	AddNewInformation("Reload: " + std::to_string(reload).substr(0, 3));
 }
 
 void HoverTurretButton::Update(float deltaTime) {

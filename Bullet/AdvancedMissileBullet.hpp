@@ -16,6 +16,10 @@ protected:
 	const float rotateRadian = 2 * ALLEGRO_PI;
 	std::list<Bullet*>::iterator lockedBulletIterator;
 public:
+
+	static const int Damage;
+	static const int Speed;
+
 	explicit AdvancedMissileBullet(Engine::Point position, Engine::Point forwardDirection, float rotation, Turret* parent);
 	void Update(float deltaTime) override;
 	void OnExplode(Enemy* enemy) override;
