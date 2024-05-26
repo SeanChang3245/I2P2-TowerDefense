@@ -5,5 +5,6 @@
 class AdvancedTankEnemy : public Enemy {
 public:
 	AdvancedTankEnemy(int x, int y);
+	void Update(float deltaTime) override;
 };
 #endif 

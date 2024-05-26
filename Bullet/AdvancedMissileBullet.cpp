@@ -5,6 +5,7 @@
 
 #include "UI/Animation/DirtyEffect.hpp"
 #include "Enemy/Enemy.hpp"
+#include "Engine/Collider.hpp"
 #include "Engine/Group.hpp"
 #include "Engine/IObject.hpp"
 #include "AdvancedMissileBullet.hpp"
@@ -53,7 +54,29 @@ void AdvancedMissileBullet::Update(float deltaTime) {
 		Velocity = ((abs(radian) - maxRotateRadian) * originVelocity + maxRotateRadian * targetVelocity) / radian;
 	Velocity = speed * Velocity.Normalize();
 	Rotation = atan2(Velocity.y, Velocity.x) + ALLEGRO_PI / 2;
-	Bullet::Update(deltaTime);
+
+	// new
+
+	Sprite::Update(deltaTime);
+	PlayScene* scene = getPlayScene();
+	// Can be improved by Spatial Hash, Quad Tree, ...
+	// However simply loop through all enemies is enough for this program.
+	for (auto& it : scene->EnemyGroup->GetObjects()) {
+		Enemy* enemy = dynamic_cast<Enemy*>(it);
+		if (!enemy->Visible)
+			continue;
+		if (Engine::Collider::IsCircleOverlap(Position, CollisionRadius, enemy->Position, enemy->CollisionRadius)) {
+			OnExplode(enemy);
+			enemy->Hit(damage);
+			enemy->set_froze_timer(1);
+			getPlayScene()->BulletGroup->RemoveObject(objectIterator);
+			return;
+		}
+	}
+	// Check if out of boundary.
+	if (!Engine::Collider::IsRectOverlap(Position - Size / 2, Position + Size / 2, Engine::Point(0, 0), PlayScene::GetClientSize()))
+		getPlayScene()->BulletGroup->RemoveObject(objectIterator);
+
 }
 void AdvancedMissileBullet::OnExplode(Enemy* enemy) {
 	Target->lockedBullets.erase(lockedBulletIterator);

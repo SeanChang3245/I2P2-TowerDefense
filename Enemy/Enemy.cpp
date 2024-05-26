@@ -37,6 +37,7 @@ Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float
 	Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money) {
 	CollisionRadius = radius;
 	reachEndTime = 0;
+	froze_count_down = 0;
 }
 
 void Enemy::Hit(float damage) {
@@ -94,6 +95,12 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 void Enemy::Update(float deltaTime) {
 	// Pre-calculate the velocity.
 	float remainSpeed = speed * deltaTime;
+	froze_count_down -= deltaTime;
+	if(froze_count_down > 0)
+		remainSpeed = 0.001;
+	else
+		froze_count_down = 0;
+
 	while (remainSpeed != 0) {
 		if (path.empty()) {
 			// Reach end point.
@@ -136,4 +143,9 @@ void Enemy::Draw() const {
 int Enemy::get_kill_score() const
 {
 	return this->kill_score;
+}
+
+void Enemy::set_froze_timer(float duration)
+{
+	this->froze_count_down = duration;
 }

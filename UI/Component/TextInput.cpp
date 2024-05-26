@@ -56,18 +56,26 @@ static std::string get_date()
 {
     std::string month;
     std::string day;
+    std::string hour;
+    std::string minute;
 
     std::time_t t = std::time(0);   // get time now
     std::tm* now = std::localtime(&t);
     month = std::to_string(now->tm_mon+1);
     day = std::to_string(now->tm_mday);
+    hour = std::to_string(now->tm_hour);
+    minute = std::to_string(now->tm_min);
 
     if(month.size() == 1)
         month = "0" + month;
     if(day.size() == 1)
         day = "0" + day;
+    if(hour.size() == 1)
+        hour = "0" + hour;
+    if(minute.size() == 1)
+        minute = "0" + minute;
 
-    return month + "/" + day;
+    return month + "/" + day + ' ' + hour + ':' + minute;
 }
 
 void Engine::TextInputBlock::save_input_to_file(int score)

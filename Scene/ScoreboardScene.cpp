@@ -17,7 +17,7 @@
 using P = std::pair<ScoreboardData, Engine::Group *>;
 std::ifstream &operator>>(std::ifstream &fin, ScoreboardData &data)
 {
-	fin >> data.player_name >> data.score >> data.date;
+	fin >> data.player_name >> data.score >> data.date_day >> data.date_hour;
 	return fin;
 }
 
@@ -125,7 +125,8 @@ void ScoreboardScene::generate_all_row_element()
 	for (int i = 0; i < data_ptr_pairs.size(); ++i)
 	{
 		auto data = data_ptr_pairs[i].first;
-		data_ptr_pairs[i].second = create_row_group_element(data.player_name, data.score, data.date, i % 5 + 1);
+		std::string date = data.date_day + ' ' + data.date_hour;
+		data_ptr_pairs[i].second = create_row_group_element(data.player_name, data.score, date, i % 5 + 1);
 		UIScoreboard->AddNewObject(data_ptr_pairs[i].second);
 	}
 }
@@ -159,12 +160,16 @@ Engine::Group *ScoreboardScene::create_row_group_element(std::string first, std:
 
 static bool ascending_date(const P &lhs, const P &rhs)
 {
-	return lhs.first.date < rhs.first.date;
+	std::string ldate = lhs.first.date_day + lhs.first.date_hour;
+	std::string rdate = rhs.first.date_day + rhs.first.date_hour;
+	return ldate < rdate;
 }
 
 static bool descending_date(const P &lhs, const P &rhs)
 {
-	return lhs.first.date > rhs.first.date;
+	std::string ldate = lhs.first.date_day + lhs.first.date_hour;
+	std::string rdate = rhs.first.date_day + rhs.first.date_hour;
+	return ldate > rdate;
 }
 
 static bool ascending_name(const P &lhs, const P &rhs)

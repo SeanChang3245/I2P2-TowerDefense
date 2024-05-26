@@ -11,8 +11,9 @@ struct ScoreboardData
 {
     std::string player_name;
     std::string score;
-    std::string date;
-    ScoreboardData() : date(std::string("01/01")) {}
+    std::string date_day;
+    std::string date_hour;
+    ScoreboardData() : date_day(std::string("01/01")) {}
 };
 
 class ScoreboardScene final : public Engine::IScene

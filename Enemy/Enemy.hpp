@@ -16,6 +16,7 @@ protected:
  	std::vector<Engine::Point> path;
 	float speed;
 	float hp;
+	float froze_count_down;
 	int money;
 	int kill_score;
 	PlayScene* getPlayScene();
@@ -30,5 +31,6 @@ public:
 	void Update(float deltaTime) override;
 	void Draw() const override;
 	int get_kill_score() const;
+	void set_froze_timer(float duration);
 };
 #endif // ENEMY_HPP
