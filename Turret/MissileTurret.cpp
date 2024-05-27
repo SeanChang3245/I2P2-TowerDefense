@@ -15,8 +15,9 @@ const int MissileTurret::Damage = MissileBullet::Damage;
 const float MissileTurret::Reload = 4;
 
 MissileTurret::MissileTurret(float x, float y) :
-	Turret("play/tower-base.png", "play/turret-3.png", x, y, Range, Price, Reload) {
+	Turret("play/tower-base.png", "play/turret-3.png", x, y, Range, Price, Reload, TURRET) {
 }
+
 void MissileTurret::CreateBullet() {
 	Engine::Point diff = Engine::Point(cos(Rotation - ALLEGRO_PI / 2), sin(Rotation - ALLEGRO_PI / 2));
 	float rotation = atan2(diff.y, diff.x);

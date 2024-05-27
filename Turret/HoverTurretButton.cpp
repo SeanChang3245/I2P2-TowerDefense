@@ -26,6 +26,20 @@ HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine:
 	AddNewInformation("Reload: " + std::to_string(reload).substr(0, 3));
 }
 
+HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine::Sprite Base, Engine::Sprite Turret, 
+			int  img_x, int img_y,
+			int inf_x, int inf_y,
+			unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
+			std::vector<std::string> details) :
+		Base(Base), Turret(Turret), money(0),
+		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, r, g, b, a)
+{
+	for(const auto &str : details)
+	{
+		AddNewInformation(str);
+	}
+}
+
 void HoverTurretButton::Update(float deltaTime) {
 	HoverImageButton::Update(deltaTime);
 	if (getPlayScene()->GetMoney() >= money) {

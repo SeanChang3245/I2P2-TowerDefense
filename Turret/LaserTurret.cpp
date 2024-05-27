@@ -15,7 +15,7 @@ const int LaserTurret::Damage = LaserBullet::Damage;
 const float LaserTurret::Reload= 0.5;
 
 LaserTurret::LaserTurret(float x, float y) :
-	Turret("play/tower-base.png", "play/turret-2.png", x, y, Range, Price, Reload) {
+	Turret("play/tower-base.png", "play/turret-2.png", x, y, Range, Price, Reload, TURRET) {
 	// Move center downward, since we the turret head is slightly biased upward.
 	Anchor.y += 8.0f / GetBitmapHeight();
 }

@@ -15,10 +15,14 @@
 PlayScene* Turret::getPlayScene() {
 	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
 }
-Turret::Turret(std::string imgBase, std::string imgTurret, float x, float y, float radius, int price, float coolDown) :
-	Sprite(imgTurret, x, y), price(price), coolDown(coolDown), imgBase(imgBase, x, y) {
+
+Turret::Turret(std::string imgBase, std::string imgTurret, float x, float y, float radius, int price, float coolDown, Turret_Type _type) :
+	Sprite(imgTurret, x, y), price(price), coolDown(coolDown), imgBase(imgBase, x, y), type(_type)
+
+{
 	CollisionRadius = radius;
 }
+
 void Turret::Update(float deltaTime) {
 	Sprite::Update(deltaTime);
 	PlayScene* scene = getPlayScene();
@@ -48,6 +52,8 @@ void Turret::Update(float deltaTime) {
 			}
 		}
 	}
+
+	// make the turret points to the target enemy
 	if (Target) {
 		Engine::Point originRotation = Engine::Point(cos(Rotation - ALLEGRO_PI / 2), sin(Rotation - ALLEGRO_PI / 2));
 		Engine::Point targetRotation = (Target->Position - Position).Normalize();
@@ -86,4 +92,8 @@ void Turret::Draw() const {
 }
 int Turret::GetPrice() const {
 	return price;
+}
+
+Turret_Type Turret::GetType() const{
+	return type;
 }

@@ -39,7 +39,7 @@ namespace Engine {
 
     void HoverImageButton::AddNewInformation(std::string content)
     {
-        informations->AddNewObject(new Label(content, "pirulen.ttf", 25, 
+        informations->AddNewObject(new Label(content, "pirulen.ttf", 20, 
                 static_cast<float>(1.0 * information_x), static_cast<float>(1.0 * information_y + 1.0* num_of_row * ROW_SPACING), 
                 text_color_r, text_color_g, text_color_b, text_color_a));
         num_of_row++;

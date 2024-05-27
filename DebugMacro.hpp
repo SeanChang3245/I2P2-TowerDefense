@@ -3,7 +3,7 @@
 
 // PlayScene.cpp
 #define PRINT_MAP_DISTANCE 0
-#define DIRECT_WIN 1
+#define DIRECT_WIN 0
 
 // main.cpp
 #define PRINT_LOG_VERBOSE 0

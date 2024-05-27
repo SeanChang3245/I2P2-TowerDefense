@@ -16,7 +16,7 @@ const int AdvancedMissileTurret::Damage = AdvancedMissileBullet::Damage;
 const float AdvancedMissileTurret::Reload = 2;
 
 AdvancedMissileTurret::AdvancedMissileTurret(float x, float y) :
-	Turret("play/tower-base.png", "play/turret-6.png", x, y, Range, Price, Reload) {
+	Turret("play/tower-base.png", "play/turret-6.png", x, y, Range, Price, Reload, TURRET) {
 }
 
 void AdvancedMissileTurret::CreateBullet() {

@@ -21,6 +21,7 @@
 #include "UI/Animation/Plane.hpp"
 #include "Enemy/PlaneEnemy.hpp"
 #include "PlayScene.hpp"
+#include "Engine/Point.hpp"
 #include "Engine/Resources.hpp"
 #include "Enemy/SoldierEnemy.hpp"
 #include "Enemy/TankEnemy.hpp"
@@ -28,6 +29,7 @@
 #include "Turret/TurretButton.hpp"
 #include "Engine/LOG.hpp"
 #include "Turret/HoverTurretButton.hpp"
+#include "Turret/Shovel.hpp"
 #include "DebugMacro.hpp"
 #include "Bullet/FireBullet.hpp"
 
@@ -265,41 +267,19 @@ void PlayScene::OnMouseUp(int button, int mx, int my)
 		return;
 	const int x = mx / BlockSize;
 	const int y = my / BlockSize;
+	// left click
 	if (button == 1)
-	{ // left click
+	{ 
 		if (mapState[y][x] != TILE_OCCUPIED)
 		{
-			if (!preview)
-				return;
-			// Check if turret can be place at (x,y)
-			if (!CheckSpaceValid(x, y))
-			{
-				Engine::Sprite *sprite;
-				GroundEffectGroup->AddNewObject(sprite = new DirtyEffect("play/target-invalid.png", 1, x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2));
-				sprite->Rotation = 0;
-				return;
-			}
-			// Purchase.
-			EarnMoney(-preview->GetPrice());
-			// Remove Preview.
-			preview->GetObjectIterator()->first = false;
-			UIGroup->RemoveObject(preview->GetObjectIterator());
-			// Construct real turret.
-			preview->Position.x = x * BlockSize + BlockSize / 2;
-			preview->Position.y = y * BlockSize + BlockSize / 2;
-			preview->Enabled = true;
-			preview->Preview = false;
-			preview->Tint = al_map_rgba(255, 255, 255, 255);
-			TowerGroup->AddNewObject(preview);
-			// To keep responding when paused.
-			preview->Update(0);
-			// Remove Preview.
-			preview = nullptr;
-
-			mapState[y][x] = TILE_OCCUPIED;
-			OnMouseMove(mx, my);
+			PlaceTurret(x, y);
+		}
+		if (mapState[y][x] == TILE_OCCUPIED)
+		{
+			DeconstructTurret(x, y);
 		}
 	}
+	OnMouseMove(mx, my);
 }
 void PlayScene::OnKeyDown(int keyCode)
 {
@@ -349,6 +329,11 @@ void PlayScene::OnKeyDown(int keyCode)
 	{
 		// Hotkey for AdvancedMissileTurret.
 		UIBtnClicked(3);
+	}
+	else if (keyCode == ALLEGRO_KEY_T)
+	{
+		// Hotkey for Shovel.
+		UIBtnClicked(4);
 	}
 	// TODO: [CUSTOM-TURRET]: Make specific key to create the turret.
 	else if (keyCode >= ALLEGRO_KEY_0 && keyCode <= ALLEGRO_KEY_9)
@@ -419,12 +404,13 @@ void PlayScene::ReadMap()
 		throw std::ios_base::failure("Map data is corrupted.");
 	// Store map in 2d array.
 	mapState = std::vector<std::vector<TileType>>(MapHeight, std::vector<TileType>(MapWidth));
+	originalMapState = std::vector<std::vector<TileType>>(MapHeight, std::vector<TileType>(MapWidth));
 	for (int i = 0; i < MapHeight; i++)
 	{
 		for (int j = 0; j < MapWidth; j++)
 		{
 			const bool num = mapData[i * MapWidth + j];
-			mapState[i][j] = num ? TILE_FLOOR : TILE_DIRT;
+			mapState[i][j] = originalMapState[i][j] = num ? TILE_FLOOR : TILE_DIRT;
 			if (num)
 				TileMapGroup->AddNewObject(new Engine::Image("play/floor.png", j * BlockSize, i * BlockSize, BlockSize, BlockSize));
 			else
@@ -462,6 +448,7 @@ void PlayScene::ConstructUI()
 	UIGroup->AddNewObject(UIScore = new Engine::Label(std::string("Score: ") + std::to_string(total_score), "pirulen.ttf", 24, 1294, 88));
 	UIGroup->AddNewObject(UILives = new Engine::Label(std::string("Life ") + std::to_string(lives), "pirulen.ttf", 24, 1294, 128));
 
+	std::vector<std::string> details;
 	HoverTurretButton *btn;
 	const int information_x = 1294;
 	const int information_y = 400;
@@ -510,6 +497,20 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
 	UIGroup->AddNewControlObject(btn);
 
+	// Button 5
+	details.clear();
+	details.push_back("return half price");
+	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
+		Engine::Sprite("play/shovel.png", 1294, 252, 0, 0, 0, 0),
+		Engine::Sprite("play/shovel.png", 1294, 252, 0, 0, 0, 0),
+		1294, 252,
+		information_x, information_y,
+		0, 0, 0, 255,
+		details);
+	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
+	UIGroup->AddNewControlObject(btn);
+
+
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
 	int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
 	int shift = 135 + 25;
@@ -521,7 +522,10 @@ void PlayScene::ConstructUI()
 void PlayScene::UIBtnClicked(int id)
 {
 	if (preview)
+	{
 		UIGroup->RemoveObject(preview->GetObjectIterator());
+		preview = nullptr;
+	}
 	// TODO: [CUSTOM-TURRET]: On callback, create the turret.
 	if (id == 0 && money >= MachineGunTurret::Price)
 		preview = new MachineGunTurret(0, 0);
@@ -531,6 +535,8 @@ void PlayScene::UIBtnClicked(int id)
 		preview = new MissileTurret(0, 0);
 	else if (id == 3 && money >= AdvancedMissileTurret::Price)
 		preview = new AdvancedMissileTurret(0, 0);
+	else if (id == 4)
+		preview = new Shovel(0, 0);
 
 
 	if (!preview)
@@ -637,3 +643,92 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
 
 	return map;
 }
+
+void PlayScene::PlaceTurret(const int &x, const int &y)
+{
+	if (!preview || preview->GetType() != TURRET)
+		return;
+	// Check if turret can be place at (x,y)
+	if (!CheckSpaceValid(x, y))
+	{
+		Engine::Sprite *sprite;
+		GroundEffectGroup->AddNewObject(sprite = new DirtyEffect("play/target-invalid.png", 1, x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2));
+		sprite->Rotation = 0;
+		return;
+	}
+
+	for(auto &it : this->TowerGroup->GetObjects())
+	{
+		Turret* turret = dynamic_cast<Turret*>(it);
+		if(!it)
+			return;
+	}
+
+	// Purchase.
+	EarnMoney(-preview->GetPrice());
+	
+	// Remove Preview.
+	preview->GetObjectIterator()->first = false;
+	UIGroup->RemoveObject(preview->GetObjectIterator());
+	
+	// Construct real turret.
+	preview->Position.x = x * BlockSize + BlockSize / 2;
+	preview->Position.y = y * BlockSize + BlockSize / 2;
+	preview->Enabled = true;
+	preview->Preview = false;
+	preview->Tint = al_map_rgba(255, 255, 255, 255);
+	TowerGroup->AddNewObject(preview);
+	
+	// To keep responding when paused.
+	preview->Update(0);
+	
+	// Remove Preview.
+	preview = nullptr;
+
+	mapState[y][x] = TILE_OCCUPIED;
+	// OnMouseMove(mx, my);
+}
+
+void PlayScene::DeconstructTurret(const int &x, const int &y)
+{
+	if (!preview || preview->GetType() != TOOL)
+		return;
+	// Check if turret can be place at (x,y)
+	Engine::Point cur_mouse_position(x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2);
+
+	Turret *target_turret = nullptr;
+	for(auto &it : this->TowerGroup->GetObjects())
+	{
+		Turret* turret = dynamic_cast<Turret*>(it);
+		if(!turret->Visible)
+			continue;
+		if(cur_mouse_position == turret->Position)
+		{
+			target_turret = turret;
+			break;
+		}
+	}
+	
+	if(target_turret == nullptr)
+		return;
+
+	// Get money back.
+	EarnMoney(target_turret->GetPrice() / 2);
+
+	// Remove Preview.
+	preview->GetObjectIterator()->first = false;
+	UIGroup->RemoveObject(preview->GetObjectIterator());
+
+	// Delete target turret.
+	TowerGroup->RemoveObject(target_turret->GetObjectIterator());
+
+	// To keep responding when paused.
+	preview->Update(0);
+	
+	// Remove Preview.
+	preview = nullptr;
+
+	// Give Back Space
+	mapState[y][x] = originalMapState[y][x];
+}
+

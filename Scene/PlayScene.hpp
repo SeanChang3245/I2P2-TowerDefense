@@ -59,6 +59,7 @@ public:
 	Engine::Sprite* dangerIndicator;
 	Turret* preview;
 	std::vector<std::vector<TileType>> mapState;
+	std::vector<std::vector<TileType>> originalMapState;
 	std::vector<std::vector<int>> mapDistance;
 	std::list<std::pair<int, float>> enemyWaveData;
 	
@@ -84,6 +85,10 @@ public:
 	void ReadEnemyWave();
 	void ConstructUI();
 	void UIBtnClicked(int id);
+	// place turret at (x,y) if possible
+	void PlaceTurret(const int &x, const int &y);
+	// delete turret (x,y) and return half of its price if exist
+	void DeconstructTurret(const int &x, const int &y);
 
 	// check whether a turret can be placed at (x,y)
 	bool CheckSpaceValid(int x, int y);

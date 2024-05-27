@@ -94,6 +94,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Turret/TurretButton.hpp
         Turret/HoverTurretButton.cpp
         Turret/HoverTurretButton.hpp
+        Turret/Shovel.cpp
+        Turret/Shovel.hpp
         Scene/WinScene.cpp
         Scene/WinScene.hpp
 
