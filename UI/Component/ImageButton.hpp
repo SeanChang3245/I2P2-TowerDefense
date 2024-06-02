@@ -25,6 +25,7 @@ namespace Engine {
 	public:
 		// Whether the button can be pressed.
 		bool Enabled = true;
+
 		/// <summary>
 		/// Construct a image object.
 		/// </summary>
