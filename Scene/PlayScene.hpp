@@ -41,6 +41,9 @@ public:
 	static const Engine::Point EndGridPoint;
 	static const std::vector<int> code;
 	int MapId;
+	// multiplier for enemy count
+	// easy: 1.0, normal: 1.3, hard: 1.5
+	float difficulty;
 	float ticks;
 	float deathCountDown;
 	// Map tiles.

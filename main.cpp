@@ -6,11 +6,15 @@
 #include "Scene/LoseScene.hpp"
 #include "Scene/PlayScene.hpp"
 #include "Scene/StageSelectScene.hpp"
+#include "Scene/DifficultySelectScene.hpp"
 #include "Scene/WinScene.hpp"
 #include "Scene/StartScene.h"
 #include "Scene/SettingsScene.hpp"
 #include "Scene/ScoreboardScene.hpp"
 #include "DebugMacro.hpp"
+#include <filesystem>
+
+using namespace std::filesystem;
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true, PRINT_LOG_VERBOSE);
@@ -19,6 +23,7 @@ int main(int argc, char **argv) {
     // TODO: [HACKATHON-1-SCENE] (3/4): Register Scenes here
 	game.AddNewScene("start", new StartScene());
 	game.AddNewScene("stage-select", new StageSelectScene());
+	game.AddNewScene("difficulty-select", new DifficultySelectScene());
 	game.AddNewScene("settings", new SettingsScene());
 	game.AddNewScene("play", new PlayScene());
 	game.AddNewScene("lose", new LoseScene());
@@ -31,3 +36,11 @@ int main(int argc, char **argv) {
 	// game.Start("lose", 60, 1600, 832);
 	return 0;
 }
+
+// auto dirIter = std::filesystem::directory_iterator("../Scene");
+
+// int fileCount = std::count_if(
+// 	begin(dirIter),
+// 	end(dirIter),
+// 	[](auto& entry) { return entry.is_regular_file(); }
+// );

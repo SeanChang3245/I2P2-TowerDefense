@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.27)
 project(2024_I2P2_TowerDefense_with_answer)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra")
+# set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 
 include_directories(.)
 include_directories(Resource)
@@ -87,6 +87,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Engine/Sprite.hpp
         Scene/StageSelectScene.cpp
         Scene/StageSelectScene.hpp
+        Scene/DifficultySelectScene.cpp
+        Scene/DifficultySelectScene.hpp
         Enemy/TankEnemy.cpp
         Enemy/TankEnemy.hpp
         Turret/Turret.cpp

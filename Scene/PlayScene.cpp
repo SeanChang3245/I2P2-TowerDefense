@@ -432,7 +432,7 @@ void PlayScene::ReadEnemyWave()
 	std::ifstream fin(filename);
 	while (fin >> type && fin >> wait && fin >> repeat)
 	{
-		for (int i = 0; i < repeat; i++)
+		for (int i = 0; i < 1.0 * repeat * difficulty; i++)
 			enemyWaveData.emplace_back(type, wait);
 	}
 	fin.close();
