@@ -32,6 +32,7 @@
 #include "Turret/Shovel.hpp"
 #include "DebugMacro.hpp"
 #include "Bullet/FireBullet.hpp"
+#include "UI/Component/ImageButton.hpp"
 
 bool PlayScene::DebugMode = false;
 const std::vector<Engine::Point> PlayScene::directions = {Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1)};
@@ -374,7 +375,7 @@ void PlayScene::EarnScore(int score)
 
 void PlayScene::ReadMap()
 {
-	std::string filename = std::string("Resource/map") + std::to_string(MapId) + ".txt";
+	std::string filename = std::string("Resource/maps/map") + std::to_string(MapId) + ".txt";
 	// Read map file.
 	char c;
 	std::vector<bool> mapData;
@@ -392,16 +393,16 @@ void PlayScene::ReadMap()
 		case '\n':
 		case '\r':
 			if (static_cast<int>(mapData.size()) / MapWidth != 0)
-				throw std::ios_base::failure("Map data is corrupted.");
+				throw std::ios_base::failure("Map data is corrupted1.");
 			break;
 		default:
-			throw std::ios_base::failure("Map data is corrupted.");
+			throw std::ios_base::failure("Map data is corrupted2.");
 		}
 	}
 	fin.close();
 	// Validate map data.
 	if (static_cast<int>(mapData.size()) != MapWidth * MapHeight)
-		throw std::ios_base::failure("Map data is corrupted.");
+		throw std::ios_base::failure("Map data is corrupted3.");
 	// Store map in 2d array.
 	mapState = std::vector<std::vector<TileType>>(MapHeight, std::vector<TileType>(MapWidth));
 	originalMapState = std::vector<std::vector<TileType>>(MapHeight, std::vector<TileType>(MapWidth));
@@ -422,7 +423,9 @@ void PlayScene::ReadEnemyWave()
 {
 	// TODO: [HACKATHON-3-BUG] (3/5): Trace the code to know how the enemies are created.
 	// TODO: [HACKATHON-3-BUG] (3/5): There is a bug in these files, which let the game only spawn the first enemy, try to fix it.
-	std::string filename = std::string("Resource/enemy") + std::to_string(MapId) + ".txt";
+
+	// if the map is user defined, then use the same enemy file as Stage 2
+	std::string filename = std::string("Resource/enemy") + std::to_string(std::min(MapId, 2)) + ".txt";
 	Engine::LOG(Engine::INFO) << "Loaded Resource<text>: " << filename;
 
 	// Read enemy file.
@@ -453,7 +456,7 @@ void PlayScene::ConstructUI()
 	const int information_x = 1294;
 	const int information_y = 400;
 
-	// Button 1
+	// Turret 1
 	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
 		Engine::Sprite("play/tower-base.png", 1294, 176, 0, 0, 0, 0),
 		Engine::Sprite("play/turret-1.png", 1294, 176 - 8, 0, 0, 0, 0),
@@ -464,7 +467,7 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 0));
 	UIGroup->AddNewControlObject(btn);
 
-	// Button 2
+	// Turret 2
 	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
 		Engine::Sprite("play/tower-base.png", 1370, 176, 0, 0, 0, 0),
 		Engine::Sprite("play/turret-2.png", 1370, 176 - 8, 0, 0, 0, 0),
@@ -475,7 +478,7 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 1));
 	UIGroup->AddNewControlObject(btn);
 
-	// Button 3
+	// Turret 3
 	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
 		Engine::Sprite("play/tower-base.png", 1446, 176, 0, 0, 0, 0),
 		Engine::Sprite("play/turret-3.png", 1446, 176, 0, 0, 0, 0),
@@ -486,7 +489,7 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 2));
 	UIGroup->AddNewControlObject(btn);
 
-	// Button 4
+	// Turret 4
 	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
 		Engine::Sprite("play/tower-base.png", 1522, 176, 0, 0, 0, 0),
 		Engine::Sprite("play/turret-6.png", 1522, 176, 0, 0, 0, 0),
@@ -497,7 +500,7 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 3));
 	UIGroup->AddNewControlObject(btn);
 
-	// Button 5
+	// Tool 1
 	details.clear();
 	details.push_back("return half price");
 	btn = new HoverTurretButton("play/floor.png", "play/dirt.png",
@@ -510,11 +513,17 @@ void PlayScene::ConstructUI()
 	btn->SetOnClickCallback(std::bind(&PlayScene::UIBtnClicked, this, 4));
 	UIGroup->AddNewControlObject(btn);
 
+	// Exit button
+	Engine::ImageButton *btn2;
+	btn2 = new Engine::ImageButton("play/dirt.png", "play/floor.png", 1310, 750, 260, 75);
+	btn2->SetOnClickCallback(std::bind(&PlayScene::ExitOnClick, this));
+	UIGroup->AddNewControlObject(btn2);
+	UIGroup->AddNewObject(new Engine::Label("exit", "pirulen.ttf", 32, 1440, 750 + 75.0/2, 0, 0, 0, 255, 0.5, 0.5));
 
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
 	int h = Engine::GameEngine::GetInstance().GetScreenSize().y;
 	int shift = 135 + 25;
-	dangerIndicator = new Engine::Sprite("play/benjamin.png", w - shift, h - shift);
+	dangerIndicator = new Engine::Sprite("play/benjamin.png", w - shift, h - shift - 100);
 	dangerIndicator->Tint.a = 0;
 	UIGroup->AddNewObject(dangerIndicator);
 }
@@ -732,3 +741,7 @@ void PlayScene::DeconstructTurret(const int &x, const int &y)
 	mapState[y][x] = originalMapState[y][x];
 }
 
+void PlayScene::ExitOnClick()
+{
+	Engine::GameEngine::GetInstance().ChangeScene("lose");
+}

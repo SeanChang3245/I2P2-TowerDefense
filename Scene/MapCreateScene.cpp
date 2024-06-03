@@ -40,7 +40,6 @@ void MapCreateScene::Initialize()
 
 	// Add groups from bottom to top.
 	AddNewObject(TileMapGroup = new Group());
-	AddNewObject(DebugIndicatorGroup = new Group());
 	AddNewControlObject(UIGroup = new Group());
 
     init_map_data();
@@ -50,7 +49,8 @@ void MapCreateScene::Initialize()
 	
     ErrorLabel = new Engine::Label("invalid map",  "pirulen.ttf", 48, 640, 416, 255, 0, 0, 255, 0.5, 0.5);
     ErrorLabel->Visible = false;
-    UIGroup->AddNewObject(ErrorLabel);
+	AddNewObject(ErrorLabel);
+    // UIGroup->AddNewObject(ErrorLabel);
 }
 
 void MapCreateScene::Terminate()
@@ -96,6 +96,9 @@ void MapCreateScene::Draw() const
 			}
 		}
 	}
+	// make label show upon the distance
+	if(ErrorLabel->Visible)
+		ErrorLabel->Draw();
 }
 
 void MapCreateScene::OnMouseDown(int button, int mx, int my)

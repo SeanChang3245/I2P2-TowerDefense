@@ -88,6 +88,7 @@ public:
 	void ReadEnemyWave();
 	void ConstructUI();
 	void UIBtnClicked(int id);
+	void ExitOnClick();
 	// place turret at (x,y) if possible
 	void PlaceTurret(const int &x, const int &y);
 	// delete turret (x,y) and return half of its price if exist

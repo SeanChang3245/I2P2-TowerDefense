@@ -82,7 +82,8 @@
         "execution": "cpp",
         "mutex": "cpp",
         "string_view": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "filesystem": "cpp"
     },
     "C_Cpp.default.compilerPath": "C:\\llvm-mingw-20231128-msvcrt-x86_64\\bin\\clang.exe"
 }
