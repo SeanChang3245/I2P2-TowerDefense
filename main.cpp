@@ -13,9 +13,6 @@
 #include "Scene/ScoreboardScene.hpp"
 #include "Scene/MapCreateScene.hpp"
 #include "DebugMacro.hpp"
-#include <filesystem>
-
-using namespace std::filesystem;
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true, PRINT_LOG_VERBOSE);

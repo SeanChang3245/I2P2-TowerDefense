@@ -103,6 +103,10 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Scene/WinScene.hpp
         Scene/MapCreateScene.cpp
         Scene/MapCreateScene.hpp
+        Scene/ModeSelectScene.cpp
+        Scene/ModeSelectScene.hpp
+        Scene/ReversePlayScene.cpp
+        Scene/ReversePlayScene.hpp
 
         # TODO: [HACKATHON-1-SCENE] (2/4) Add the new scene source files here
         Scene/StartScene.cpp
@@ -116,6 +120,12 @@ add_executable(2024_I2P2_TowerDefense_with_answer
 
         DebugMacro.hpp
 )
+
+
+target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/mlpack_x64-windows/include)
+target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/armadillo_x64-windows/include)
+target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/cereal_x64-windows/include)
+target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/ensmallen_x64-windows/include)
 
 IF (WIN32)
     target_include_directories(2024_I2P2_TowerDefense_with_answer PUBLIC C:/allegro/include)
