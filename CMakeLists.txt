@@ -15,110 +15,58 @@ file(COPY allegro_monolith-5.2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(2024_I2P2_TowerDefense_with_answer
         Engine/Allegro5Exception.cpp
-        Engine/Allegro5Exception.hpp
         Engine/AudioHelper.cpp
-        Engine/AudioHelper.hpp
         Bullet/Bullet.cpp
-        Bullet/Bullet.hpp
         Engine/Collider.cpp
-        Engine/Collider.hpp
         UI/Animation/DirtyEffect.cpp
-        UI/Animation/DirtyEffect.hpp
         Enemy/Enemy.cpp
-        Enemy/Enemy.hpp
         UI/Animation/ExplosionEffect.cpp
-        UI/Animation/ExplosionEffect.hpp
         Bullet/FireBullet.cpp
-        Bullet/FireBullet.hpp
         Engine/GameEngine.cpp
-        Engine/GameEngine.hpp
         Engine/Group.cpp
-        Engine/Group.hpp
         Engine/IControl.cpp
-        Engine/IControl.hpp
         UI/Component/Image.cpp
-        UI/Component/Image.hpp
         UI/Component/ImageButton.cpp
-        UI/Component/ImageButton.hpp
         UI/Component/HoverImageButton.cpp
-        UI/Component/HoverImageButton.hpp
         Engine/IObject.cpp
-        Engine/IObject.hpp
         Engine/IScene.cpp
-        Engine/IScene.hpp
         UI/Component/Label.cpp
-        UI/Component/Label.hpp
         Bullet/LaserBullet.cpp
-        Bullet/LaserBullet.hpp
         Turret/LaserTurret.cpp
-        Turret/LaserTurret.hpp
         Engine/LOG.cpp
-        Engine/LOG.hpp
         Scene/LoseScene.cpp
-        Scene/LoseScene.hpp
         Turret/MachineGunTurret.cpp
-        Turret/MachineGunTurret.hpp
         main.cpp
         Bullet/MissileBullet.cpp
-        Bullet/MissileBullet.hpp
         Bullet/AdvancedMissileBullet.cpp
-        Bullet/AdvancedMissileBullet.hpp
         Turret/MissileTurret.cpp
-        Turret/MissileTurret.hpp
         Turret/AdvancedMissileTurret.cpp
-        Turret/AdvancedMissileTurret.hpp
         UI/Animation/Plane.cpp
-        UI/Animation/Plane.hpp
         Enemy/PlaneEnemy.cpp
-        Enemy/PlaneEnemy.hpp
         Scene/PlayScene.cpp
-        Scene/PlayScene.hpp
         Engine/Point.cpp
-        Engine/Point.hpp
         Engine/Resources.cpp
-        Engine/Resources.hpp
         UI/Component/Slider.cpp
-        UI/Component/Slider.hpp
         Enemy/SoldierEnemy.cpp
-        Enemy/SoldierEnemy.hpp
         Enemy/AdvancedTankEnemy.cpp
-        Enemy/AdvancedTankEnemy.hpp
         Engine/Sprite.cpp
-        Engine/Sprite.hpp
         Scene/StageSelectScene.cpp
-        Scene/StageSelectScene.hpp
         Scene/DifficultySelectScene.cpp
-        Scene/DifficultySelectScene.hpp
         Enemy/TankEnemy.cpp
-        Enemy/TankEnemy.hpp
         Turret/Turret.cpp
-        Turret/Turret.hpp
         Turret/TurretButton.cpp
-        Turret/TurretButton.hpp
         Turret/HoverTurretButton.cpp
-        Turret/HoverTurretButton.hpp
         Turret/Shovel.cpp
-        Turret/Shovel.hpp
         Scene/WinScene.cpp
-        Scene/WinScene.hpp
         Scene/MapCreateScene.cpp
-        Scene/MapCreateScene.hpp
         Scene/ModeSelectScene.cpp
-        Scene/ModeSelectScene.hpp
         Scene/ReversePlayScene.cpp
-        Scene/ReversePlayScene.hpp
 
-        # TODO: [HACKATHON-1-SCENE] (2/4) Add the new scene source files here
         Scene/StartScene.cpp
-        Scene/StartScene.h
         Scene/SettingsScene.cpp
-        Scene/SettingsScene.hpp
         Scene/ScoreBoardScene.cpp
-        Scene/ScoreBoardScene.hpp
         UI/Component/TextInput.cpp
-        UI/Component/TextInput.hpp
 
-        DebugMacro.hpp
 )
 
 
