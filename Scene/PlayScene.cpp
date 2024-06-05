@@ -421,9 +421,6 @@ void PlayScene::ReadMap()
 }
 void PlayScene::ReadEnemyWave()
 {
-	// TODO: [HACKATHON-3-BUG] (3/5): Trace the code to know how the enemies are created.
-	// TODO: [HACKATHON-3-BUG] (3/5): There is a bug in these files, which let the game only spawn the first enemy, try to fix it.
-
 	// if the map is user defined, then use the same enemy file as Stage 2
 	std::string filename = std::string("Resource/enemy") + std::to_string(std::min(MapId, 2)) + ".txt";
 	Engine::LOG(Engine::INFO) << "Loaded Resource<text>: " << filename;

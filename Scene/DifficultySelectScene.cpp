@@ -49,7 +49,7 @@ void DifficultySelectScene::Initialize() {
 	bgmInstance = AudioHelper::PlaySample("select.ogg", true, AudioHelper::BGMVolume);
 }
 void DifficultySelectScene::Terminate() {
-    Engine::LOG(Engine::INFO) << "terminate stage select scene";
+    Engine::LOG(Engine::INFO) << "terminate difficulty select scene";
 	AudioHelper::StopSample(bgmInstance);
 	bgmInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
 	IScene::Terminate();

@@ -15,21 +15,40 @@
 #include "Engine/IScene.hpp"
 #include "Engine/LOG.hpp"
 #include "Scene/PlayScene.hpp"
+#include "Scene/ReversePlayScene.hpp"
 #include "Turret/Turret.hpp"
 
+using Engine::LOG;
+using Engine::INFO;
+
 PlayScene* Enemy::getPlayScene() {
-	return dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
+	PlayScene *playscene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetActiveScene());
+	return playscene;
 }
 
 void Enemy::OnExplode() {
+
+
+
+	LOG(INFO) << "onexplode 1";
+	if(getPlayScene() == nullptr)
+		LOG(INFO) << "play scene nullptr";
+	if(getPlayScene()->EffectGroup == nullptr)
+		LOG(INFO) << "effect group nullptr";
+
 	getPlayScene()->EffectGroup->AddNewObject(new ExplosionEffect(Position.x, Position.y));
+	LOG(INFO) << "onexplode 2";
 	std::random_device dev;
 	std::mt19937 rng(dev());
+	LOG(INFO) << "onexplode 3";
 	std::uniform_int_distribution<std::mt19937::result_type> distId(1, 3);
+	LOG(INFO) << "onexplode 4";
 	std::uniform_int_distribution<std::mt19937::result_type> dist(1, 20);
+	LOG(INFO) << "onexplode 5";
 	for (int i = 0; i < 10; i++) {
 		// Random add 10 dirty effects.
 		getPlayScene()->GroundEffectGroup->AddNewObject(new DirtyEffect("play/dirty-" + std::to_string(distId(rng)) + ".png", dist(rng), Position.x, Position.y));
+		LOG(INFO) << "onexplode 6";
 	}
 }
 
@@ -41,14 +60,19 @@ Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float
 }
 
 void Enemy::Hit(float damage) {
+	LOG(INFO) << "enter enemy hit";
 	hp -= damage;
 	if (hp <= 0) {
+		LOG(INFO) << "before OnExplode";
 		OnExplode();
+		LOG(INFO) << "after OnExplode";
 		// Remove all turret's reference to target.
 		for (auto& it: lockedTurrets)
 			it->Target = nullptr;
+		LOG(INFO) << "after unlock turret";
 		for (auto& it: lockedBullets)
 			it->Target = nullptr;
+		LOG(INFO) << "after unlock bullet";
 		getPlayScene()->EarnScore(kill_score);
 		getPlayScene()->EarnMoney(money);
 		getPlayScene()->EnemyGroup->RemoveObject(objectIterator);
@@ -94,21 +118,27 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 }
 void Enemy::Update(float deltaTime) {
 	// Pre-calculate the velocity.
+	LOG(INFO) << 1;
+
 	float remainSpeed = speed * deltaTime;
 	froze_count_down -= deltaTime;
 	if(froze_count_down > 0)
 		remainSpeed = 0.001;
 	else
 		froze_count_down = 0;
+	LOG(INFO) << 2;
 
 	while (remainSpeed != 0) {
+		LOG(INFO) << 3;
 		if (path.empty()) {
+			LOG(INFO) << "enter path empty";
 			// Reach end point.
 			Hit(hp);
 			getPlayScene()->Hit();
 			reachEndTime = 0;
 			return;
 		}
+		LOG(INFO) << 4;
 		Engine::Point target = path.back() * PlayScene::BlockSize + Engine::Point(PlayScene::BlockSize / 2, PlayScene::BlockSize / 2);
 		Engine::Point vec = target - Position;
 		// Add up the distances:
@@ -127,9 +157,11 @@ void Enemy::Update(float deltaTime) {
 			Velocity = normalized * remainSpeed / deltaTime;
 			remainSpeed = 0;
 		}
+		LOG(INFO) << 5;
 	}
 	Rotation = atan2(Velocity.y, Velocity.x);
 	Sprite::Update(deltaTime);
+	LOG(INFO) << 6;
 }
 
 void Enemy::Draw() const {

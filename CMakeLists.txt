@@ -14,59 +14,63 @@ file(COPY Resource DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY allegro_monolith-5.2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(2024_I2P2_TowerDefense_with_answer
+        main.cpp
+        
         Engine/Allegro5Exception.cpp
         Engine/AudioHelper.cpp
-        Bullet/Bullet.cpp
         Engine/Collider.cpp
-        UI/Animation/DirtyEffect.cpp
-        Enemy/Enemy.cpp
-        UI/Animation/ExplosionEffect.cpp
-        Bullet/FireBullet.cpp
         Engine/GameEngine.cpp
         Engine/Group.cpp
         Engine/IControl.cpp
-        UI/Component/Image.cpp
-        UI/Component/ImageButton.cpp
-        UI/Component/HoverImageButton.cpp
         Engine/IObject.cpp
         Engine/IScene.cpp
-        UI/Component/Label.cpp
-        Bullet/LaserBullet.cpp
-        Turret/LaserTurret.cpp
         Engine/LOG.cpp
-        Scene/LoseScene.cpp
-        Turret/MachineGunTurret.cpp
-        main.cpp
-        Bullet/MissileBullet.cpp
-        Bullet/AdvancedMissileBullet.cpp
-        Turret/MissileTurret.cpp
-        Turret/AdvancedMissileTurret.cpp
-        UI/Animation/Plane.cpp
-        Enemy/PlaneEnemy.cpp
-        Scene/PlayScene.cpp
         Engine/Point.cpp
         Engine/Resources.cpp
+        Engine/Sprite.cpp
+        
+        Bullet/Bullet.cpp
+        Bullet/FireBullet.cpp
+        Bullet/MissileBullet.cpp
+        Bullet/AdvancedMissileBullet.cpp
+        Bullet/LaserBullet.cpp
+
+        UI/Animation/ExplosionEffect.cpp
+        UI/Animation/DirtyEffect.cpp
+        UI/Component/Image.cpp
+        UI/Component/TextInput.cpp
+        UI/Component/ImageButton.cpp
+        UI/Component/HoverImageButton.cpp
+        UI/Component/Label.cpp
+        UI/Animation/Plane.cpp
         UI/Component/Slider.cpp
+        
+        Enemy/Enemy.cpp
+        Enemy/PlaneEnemy.cpp
         Enemy/SoldierEnemy.cpp
         Enemy/AdvancedTankEnemy.cpp
-        Engine/Sprite.cpp
-        Scene/StageSelectScene.cpp
-        Scene/DifficultySelectScene.cpp
         Enemy/TankEnemy.cpp
+        
         Turret/Turret.cpp
+        Turret/LaserTurret.cpp
+        Turret/MachineGunTurret.cpp
+        Turret/MissileTurret.cpp
+        Turret/AdvancedMissileTurret.cpp
         Turret/TurretButton.cpp
         Turret/HoverTurretButton.cpp
         Turret/Shovel.cpp
+        
         Scene/WinScene.cpp
         Scene/MapCreateScene.cpp
         Scene/ModeSelectScene.cpp
         Scene/ReversePlayScene.cpp
-
         Scene/StartScene.cpp
+        Scene/LoseScene.cpp
+        Scene/PlayScene.cpp
+        Scene/StageSelectScene.cpp
+        Scene/DifficultySelectScene.cpp
         Scene/SettingsScene.cpp
         Scene/ScoreBoardScene.cpp
-        UI/Component/TextInput.cpp
-
 )
 
 
