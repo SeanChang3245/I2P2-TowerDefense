@@ -85,6 +85,7 @@ public:
 
 	explicit NormalPlayScene() = default;
 	void ReadEnemyWave();
+	void UpdateSpawnEnemy(float deltaTime);
 
 	// static Engine::Point GetClientSize();
 	// virtual void Draw() const override;

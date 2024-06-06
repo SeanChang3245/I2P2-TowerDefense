@@ -34,64 +34,14 @@
 #include "Bullet/FireBullet.hpp"
 #include "UI/Component/ImageButton.hpp"
 
-// bool NormalPlayScene::DebugMode = false;
-// const std::vector<Engine::Point> NormalPlayScene::directions = {Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1)};
-// const int NormalPlayScene::MapWidth = 20, NormalPlayScene::MapHeight = 13;
-// const int NormalPlayScene::BlockSize = 64;
-// const float NormalPlayScene::DangerTime = 7.61;
-// const Engine::Point NormalPlayScene::SpawnGridPoint = Engine::Point(-1, 0);
-// const Engine::Point NormalPlayScene::EndGridPoint = Engine::Point(MapWidth, MapHeight - 1);
-
-// // code to activate cheat mode
-// const std::vector<int> NormalPlayScene::code = {ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEGRO_KEY_DOWN, ALLEGRO_KEY_DOWN,
-// 										  ALLEGRO_KEY_LEFT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_RIGHT,
-// 										  ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER};
-
-// Engine::Point NormalPlayScene::GetClientSize()
-// {
-// 	return Engine::Point(MapWidth * BlockSize, MapHeight * BlockSize);
-// }
-
 void NormalPlayScene::Initialize()
 {
 	Engine::LOG(Engine::INFO) << "enter NormalPlayScene::initialize\n";
+	PlayScene::Initialize();
 
-	mapState.clear();
-	keyStrokes.clear();
-	ticks = 0;
 	deathCountDown = -1;
-	lives = 10;
-	money = 150;
-	total_score = 0;
-	SpeedMult = 1;
-
-	// a scene is a Group, so there is a vector of object in the scene
-	// Add groups from bottom to top.
-	AddNewObject(TileMapGroup = new Group());
-	AddNewObject(GroundEffectGroup = new Group());
-	AddNewObject(DebugIndicatorGroup = new Group());
-	AddNewObject(TowerGroup = new Group());
-	AddNewObject(EnemyGroup = new Group());
-	AddNewObject(BulletGroup = new Group());
-	AddNewObject(EffectGroup = new Group());
-
-	// Should support buttons.
-	AddNewControlObject(UIGroup = new Group());
-	ReadMap();
 	ReadEnemyWave();
-	mapDistance = CalculateBFSDistance();
-	ConstructUI();
-	imgTarget = new Engine::Image("play/target.png", 0, 0);
-	imgTarget->Visible = false;
 	preview = nullptr;
-	UIGroup->AddNewObject(imgTarget);
-
-	// Preload Lose Scene
-	deathBGMInstance = Engine::Resources::GetInstance().GetSampleInstance("astronomia.ogg");
-	Engine::Resources::GetInstance().GetBitmap("lose/benjamin-happy.png");
-
-	// Start BGM.
-	bgmId = AudioHelper::PlayBGM("play.ogg");
 }
 
 void NormalPlayScene::Update(float deltaTime)
@@ -102,57 +52,7 @@ void NormalPlayScene::Update(float deltaTime)
 	for (int i = 0; i < SpeedMult; i++)
 	{
 		IScene::Update(deltaTime);
-
-		// Check if we should create new enemy.
-		ticks += deltaTime;
-		if (enemyWaveData.empty() || DIRECT_WIN)
-		{
-			if (EnemyGroup->GetObjects().empty() || DIRECT_WIN)
-			{
-				// Free resources.
-				/*delete TileMapGroup;
-				delete GroundEffectGroup;
-				delete DebugIndicatorGroup;
-				delete TowerGroup;
-				delete EnemyGroup;
-				delete BulletGroup;
-				delete EffectGroup;
-				delete UIGroup;
-				delete imgTarget;*/
-				Engine::GameEngine::GetInstance().ChangeScene("win");
-			}
-			continue;
-		}
-		auto current = enemyWaveData.front();
-		if (ticks < current.second)
-			continue;
-		ticks -= current.second;
-		enemyWaveData.pop_front();
-		const Engine::Point SpawnCoordinate = Engine::Point(SpawnGridPoint.x * BlockSize + BlockSize / 2, SpawnGridPoint.y * BlockSize + BlockSize / 2);
-		Enemy *enemy;
-		switch (current.first)
-		{
-		case 1:
-			EnemyGroup->AddNewObject(enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-			break;
-		case 2:
-			EnemyGroup->AddNewObject(enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-			break;
-		case 3:
-			EnemyGroup->AddNewObject(enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-			break;
-		case 4:
-			EnemyGroup->AddNewObject(enemy = new AdvancedTankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-			break;
-		// TODO: [CUSTOM-ENEMY]: You need to modify 'Resource/enemy1.txt', or 'Resource/enemy2.txt' to spawn the 4th enemy.
-		//         The format is "[EnemyId] [TimeDelay] [Repeat]".
-		// TODO: [CUSTOM-ENEMY]: Enable the creation of the enemy.
-		default:
-			continue;
-		}
-		enemy->UpdatePath(mapDistance);
-		// Compensate the time lost.
-		enemy->Update(ticks);
+		UpdateSpawnEnemy(deltaTime);
 	}
 	if (preview)
 	{
@@ -529,4 +429,58 @@ void NormalPlayScene::UpdateDangerIndicator()
 	}
 	if (SpeedMult == 0)
 		deathCountDown = -1;
+}
+
+void NormalPlayScene::UpdateSpawnEnemy(float deltaTime)
+{
+	// Check if we should create new enemy.
+	ticks += deltaTime;
+	if (enemyWaveData.empty() || DIRECT_WIN)
+	{
+		if (EnemyGroup->GetObjects().empty() || DIRECT_WIN)
+		{
+			// Free resources.
+			/*delete TileMapGroup;
+			delete GroundEffectGroup;
+			delete DebugIndicatorGroup;
+			delete TowerGroup;
+			delete EnemyGroup;
+			delete BulletGroup;
+			delete EffectGroup;
+			delete UIGroup;
+			delete imgTarget;*/
+			Engine::GameEngine::GetInstance().ChangeScene("win");
+		}
+		return;
+	}
+	auto current = enemyWaveData.front();
+	if (ticks < current.second)
+		return;
+	ticks -= current.second;
+	enemyWaveData.pop_front();
+	const Engine::Point SpawnCoordinate = Engine::Point(SpawnGridPoint.x * BlockSize + BlockSize / 2, SpawnGridPoint.y * BlockSize + BlockSize / 2);
+	Enemy *enemy;
+	switch (current.first)
+	{
+	case 1:
+		EnemyGroup->AddNewObject(enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+		break;
+	case 2:
+		EnemyGroup->AddNewObject(enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+		break;
+	case 3:
+		EnemyGroup->AddNewObject(enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+		break;
+	case 4:
+		EnemyGroup->AddNewObject(enemy = new AdvancedTankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
+		break;
+	// TODO: [CUSTOM-ENEMY]: You need to modify 'Resource/enemy1.txt', or 'Resource/enemy2.txt' to spawn the 4th enemy.
+	//         The format is "[EnemyId] [TimeDelay] [Repeat]".
+	// TODO: [CUSTOM-ENEMY]: Enable the creation of the enemy.
+	default:
+		return;;
+	}
+	enemy->UpdatePath(mapDistance);
+	// Compensate the time lost.
+	enemy->Update(ticks);
 }

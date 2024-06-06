@@ -34,7 +34,7 @@ public:
 	// remaining time to place next turret
 	float placeTurretCountDown;
 	Engine::Label* UITime;
-	Engine::Image* imgTarget;
+	// Engine::Image* imgTarget;
 	// store the type of the turret, used to create a real turret
 	
 	

@@ -35,7 +35,19 @@
 #include "Bullet/FireBullet.hpp"
 #include "UI/Component/ImageButton.hpp"
 
-const float ReversePlayScene::PlaceTurretDuration = 1.0;
+// bool ReversePlayScene::DebugMode = false;
+// const std::vector<Engine::Point> ReversePlayScene::directions = {Engine::Point(-1, 0), Engine::Point(0, -1), Engine::Point(1, 0), Engine::Point(0, 1)};
+// const int ReversePlayScene::MapWidth = 20, ReversePlayScene::MapHeight = 13;
+// const int ReversePlayScene::BlockSize = 64;
+// const Engine::Point ReversePlayScene::SpawnGridPoint = Engine::Point(-1, 0);
+// const Engine::Point ReversePlayScene::EndGridPoint = Engine::Point(MapWidth, MapHeight - 1);
+
+// // code to activate cheat mode
+// const std::vector<int> ReversePlayScene::code = {ALLEGRO_KEY_UP, ALLEGRO_KEY_UP, ALLEGRO_KEY_DOWN, ALLEGRO_KEY_DOWN,
+// 										  ALLEGRO_KEY_LEFT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_RIGHT,
+// 										  ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER};
+
+const float ReversePlayScene::PlaceTurretDuration = 10.0;
 
 using Engine::LOG;
 using Engine::INFO;
@@ -43,44 +55,13 @@ using Engine::INFO;
 void ReversePlayScene::Initialize()
 {
 	Engine::LOG(Engine::INFO) << "enter ReversePlayScene::initialize\n";
+	PlayScene::Initialize();
 
-	mapState.clear();
-	keyStrokes.clear();
-	ticks = 0;
-	lives = 10;
-	money = 150;
-	total_score = 0;
-	SpeedMult = 1;
 	remain_time = 180 / difficulty;
 	placeTurretCountDown = PlaceTurretDuration;
 	playing_danger_bgm = false;
-
-	// a scene is a Group, so there is a vector of object in the scene
-	// Add groups from bottom to top.
-	AddNewObject(TileMapGroup = new Group());
-	AddNewObject(GroundEffectGroup = new Group());
-	AddNewObject(DebugIndicatorGroup = new Group());
-	AddNewObject(TowerGroup = new Group());
-	AddNewObject(EnemyGroup = new Group());
-	AddNewObject(BulletGroup = new Group());
-	AddNewObject(EffectGroup = new Group());
-
-	// Should support buttons.
-	AddNewControlObject(UIGroup = new Group());
-	ReadMap();
-	mapDistance = CalculateBFSDistance();
-	ConstructUI();
-	imgTarget = new Engine::Image("play/target.png", 0, 0);
-	imgTarget->Visible = false;
-	UIGroup->AddNewObject(imgTarget);
-
-	// Preload Lose Scene
-	deathBGMInstance = Engine::Resources::GetInstance().GetSampleInstance("astronomia.ogg");
-	Engine::Resources::GetInstance().GetBitmap("lose/benjamin-happy.png");
-
-
-	// Start BGM.
-	bgmId = AudioHelper::PlayBGM("play.ogg");
+	cur_turret = nullptr;
+	turret_pos.x = turret_pos.y = -1;
 }
 
 void ReversePlayScene::Update(float deltaTime)
@@ -99,7 +80,6 @@ void ReversePlayScene::Update(float deltaTime)
 			Engine::GameEngine::GetInstance().ChangeScene("lose");
 			return;
 		}
-
 	}	
 }
 
@@ -167,36 +147,49 @@ void ReversePlayScene::ConstructUI()
 	const int information_x = 1294;
 	const int information_y = 400;
 
-	// Enemy 1
+	// Soldier Enemy 
 	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
 		1294, 216,
 		information_x, information_y,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 0));
+	btn->AddNewInformation(std::string("Cost: ") + std::to_string(SoldierEnemy::Cost));
+	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(SoldierEnemy::HP)));
+	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(SoldierEnemy::Speed)));
 	UIGroup->AddNewControlObject(btn);
+	
 
-	// Enemy 2
+	// Plane Enemy 
 	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
 		1370, 216,
 		information_x, information_y,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 1));
+	btn->AddNewInformation(std::string("Cost: ") + std::to_string(PlaneEnemy::Cost));
+	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(PlaneEnemy::HP)));
+	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(PlaneEnemy::Speed)));
 	UIGroup->AddNewControlObject(btn);
 
-	// Enemy 3
+	// Tank Enemy 
 	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
 		1446, 216,
 		information_x, information_y,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 2));
+	btn->AddNewInformation(std::string("Cost: ") + std::to_string(TankEnemy::Cost));
+	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(TankEnemy::HP)));
+	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(TankEnemy::Speed)));
 	UIGroup->AddNewControlObject(btn);
 
-	// Enemy 4
+	// Advanced Tank Enemy 
 	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
 		1522, 216,
 		information_x, information_y,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 3));
+	btn->AddNewInformation(std::string("Cost: ") + std::to_string(AdvancedTankEnemy::Cost));
+	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(AdvancedTankEnemy::HP)));
+	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(AdvancedTankEnemy::Speed)));
 	UIGroup->AddNewControlObject(btn);
 
 
@@ -223,25 +216,25 @@ void ReversePlayScene::UIBtnClicked(int id)
 	Enemy* enemy = nullptr;
     
     int cost = 0;
-    if (id == 0 && money >= SoldierEnemy::cost)
+    if (id == 0 && money >= SoldierEnemy::Cost)
     {
 		EnemyGroup->AddNewObject(enemy = new SoldierEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-        cost = SoldierEnemy::cost;
+        cost = SoldierEnemy::Cost;
     }
-	else if (id == 1 && money >= PlaneEnemy::cost)
+	else if (id == 1 && money >= PlaneEnemy::Cost)
     {
         EnemyGroup->AddNewObject(enemy = new PlaneEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-        cost = PlaneEnemy::cost;
+        cost = PlaneEnemy::Cost;
     }
-	else if (id == 2 && money >= TankEnemy::cost)
+	else if (id == 2 && money >= TankEnemy::Cost)
     {
         EnemyGroup->AddNewObject(enemy = new TankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-        cost = TankEnemy::cost;
+        cost = TankEnemy::Cost;
     }
-	else if (id == 3 && money >= AdvancedTankEnemy::cost)
+	else if (id == 3 && money >= AdvancedTankEnemy::Cost)
     {
         EnemyGroup->AddNewObject(enemy = new AdvancedTankEnemy(SpawnCoordinate.x, SpawnCoordinate.y));
-        cost = AdvancedTankEnemy::cost;
+        cost = AdvancedTankEnemy::Cost;
     }
 
     if(!enemy)
@@ -439,7 +432,6 @@ void ReversePlayScene::PlaceTurret(const int &x, const int &y)
 	// To keep responding when paused.
 	cur_turret->Update(0);
 	
-	// Remove Preview.
 	cur_turret = nullptr;
 
 	mapState[y][x] = TILE_OCCUPIED;

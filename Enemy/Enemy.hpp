@@ -27,7 +27,7 @@ protected:
 	PlayScene* getPlayScene();
 	virtual void OnExplode();
 public:
-	static const int cost = 0;
+	// static const int cost = 0;
 	float reachEndTime;
 	std::list<Turret*> lockedTurrets;
 	std::list<Bullet*> lockedBullets;

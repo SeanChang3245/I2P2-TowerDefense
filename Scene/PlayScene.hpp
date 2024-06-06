@@ -85,6 +85,7 @@ public:
 	virtual void ConstructUI();
 	virtual void OnKeyDown(int keyCode) override;
 	virtual void Hit();
+	virtual void ActivateCheatMode();
 
 // ========= Pure Virtual Functions ============ // 
 
@@ -112,5 +113,6 @@ public:
 	// check whether a turret can be placed at (x,y)
 	bool CheckSpaceValid(int x, int y);
 	std::vector<std::vector<int>> CalculateBFSDistance();
+	
 };
 #endif // PLAYSCENE_HPP

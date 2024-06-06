@@ -4,7 +4,13 @@
 
 class PlaneEnemy : public Enemy {
 public:
-	static const int cost = 10;
+	// The cost to spawn in reverse play scene
+	static const int Cost;
+	static const float Speed;
+	static const float HP;
+	// The money the user will earn if kill this enemy
+	static const int Money;
+	static const int KillScore;
 	PlaneEnemy(int x, int y);
 };
 #endif // PLANEENEMY_HPP

@@ -5,10 +5,16 @@
 #include "Engine/Point.hpp"
 #include "TankEnemy.hpp"
 
-TankEnemy::TankEnemy(int x, int y) : Enemy("play/enemy-3.png", x, y, 20, 20, 100, 50),
+const int TankEnemy::Cost = 15;
+const float TankEnemy::Speed = 20;
+const float TankEnemy::HP = 100;
+const int TankEnemy::Money = 50;
+const int TankEnemy::KillScore = 200;
+
+TankEnemy::TankEnemy(int x, int y) : Enemy("play/enemy-3.png", x, y, 20, Speed, HP, Money),
 	head("play/enemy-3-head.png", x, y), targetRotation(0) 
 {
-	kill_score = 200;
+	Enemy::kill_score = KillScore;
 }
 
 void TankEnemy::Draw() const {

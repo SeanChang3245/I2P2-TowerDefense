@@ -73,17 +73,13 @@ void PlayScene::Initialize()
 	AddNewObject(EnemyGroup = new Group());
 	AddNewObject(BulletGroup = new Group());
 	AddNewObject(EffectGroup = new Group());
-
-	// Should support buttons.
 	AddNewControlObject(UIGroup = new Group());
-	ReadMap();
-	
-	mapDistance = CalculateBFSDistance();
+
 	ConstructUI();
 	
-	imgTarget = new Engine::Image("play/target.png", 0, 0);
-	imgTarget->Visible = false;
-	UIGroup->AddNewObject(imgTarget);
+	// Read map data and initialize distance
+	ReadMap();
+	mapDistance = CalculateBFSDistance();
 
 	// Preload Lose Scene
 	deathBGMInstance = Engine::Resources::GetInstance().GetSampleInstance("astronomia.ogg");
@@ -308,8 +304,9 @@ void PlayScene::OnKeyDown(int keyCode)
 				++it;
 			}
 			// successfully enter cheat code
-			EarnMoney(10000);
-			EffectGroup->AddNewObject(new Plane());
+			ActivateCheatMode();
+			// EarnMoney(10000);
+			// EffectGroup->AddNewObject(new Plane());
 		}
 	}
 	
@@ -392,6 +389,7 @@ void PlayScene::ReadMap()
 		}
 	}
 }
+
 void PlayScene::ConstructUI()
 {
 	// Background
@@ -417,8 +415,12 @@ void PlayScene::ConstructUI()
 	dangerIndicator = new Engine::Sprite("play/benjamin.png", w - shift, h - shift - 100);
 	dangerIndicator->Tint.a = 0;
 	UIGroup->AddNewObject(dangerIndicator);
-}
 
+	// Initialize mouse indicator
+	imgTarget = new Engine::Image("play/target.png", 0, 0);
+	imgTarget->Visible = false;
+	UIGroup->AddNewObject(imgTarget);
+}
 
 bool PlayScene::CheckSpaceValid(int x, int y)
 {
@@ -513,7 +515,6 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
 			std::cout << '\n';
 		}
 	}
-
 	return map;
 }
 
@@ -525,7 +526,11 @@ void PlayScene::ExitOnClick()
 	Engine::GameEngine::GetInstance().ChangeScene("lose");
 }
 
-
+void PlayScene::ActivateCheatMode()
+{
+	EarnMoney(10000);
+	EffectGroup->AddNewObject(new Plane());
+}
 
 
 
