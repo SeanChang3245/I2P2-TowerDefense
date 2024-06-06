@@ -182,9 +182,11 @@ namespace Engine {
 	}
 	void GameEngine::changeScene(const std::string& name) {
 		if (scenes.count(name) == 0)
-			throw std::invalid_argument("Cannot change to a unknown scene.");
+			throw std::invalid_argument("Cannot change to a unknown scene.: " + name);
 		// Terminate the old scene.
 		activeScene->Terminate();
+		// Assign previous scene
+		previousScene = activeScene;
 		// Assign new scene
 		activeScene = scenes[name];
 		// Release unused resources.
@@ -209,6 +211,7 @@ namespace Engine {
 		if (scenes.count(firstSceneName) == 0)
 			throw std::invalid_argument("The scene is not added yet.");
 		activeScene = scenes[firstSceneName];
+		previousScene = nullptr;
 
 		initAllegro5();
 		LOG(INFO) << "Allegro5 initialized";
@@ -229,7 +232,7 @@ namespace Engine {
 	}
 	void GameEngine::AddNewScene(const std::string& name, IScene* scene) {
 		if (scenes.count(name) != 0)
-			throw std::invalid_argument("Cannot add scenes with the same name.");
+			throw std::invalid_argument("Cannot add scenes with the same name.: " + name);
 		scenes[name] = scene;
 	}
 	void GameEngine::ChangeScene(const std::string& name) {
@@ -238,9 +241,14 @@ namespace Engine {
 	IScene* GameEngine::GetActiveScene() const {
 		return activeScene;
 	}
+	IScene* GameEngine::GetPreviousScene() const {
+		if(previousScene == nullptr)
+			throw std::invalid_argument("There is no previous scene");
+		return previousScene;
+	}
 	IScene* GameEngine::GetScene(const std::string& name) {
 		if (scenes.count(name) == 0)
-			throw std::invalid_argument("Cannot get scenes that aren't added.");
+			throw std::invalid_argument("Cannot get scenes that aren't added.: " + name);
 		return scenes[name];
 	}
 	Point GameEngine::GetScreenSize() const {

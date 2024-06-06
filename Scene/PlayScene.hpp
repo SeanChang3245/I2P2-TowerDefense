@@ -17,8 +17,8 @@ namespace Engine {
 	class Sprite;
 }  // namespace Engine
 
-class PlayScene final : public Engine::IScene {
-private:
+class PlayScene : public Engine::IScene {
+protected:
 	enum TileType {
 		TILE_DIRT, // enemy can walk     
 		TILE_FLOOR, // enemy can not walk 
@@ -26,11 +26,11 @@ private:
 	};
 	ALLEGRO_SAMPLE_ID bgmId;
 	std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> deathBGMInstance;
-protected:
 	int lives;
 	int money;
 	int total_score;
 	int SpeedMult;
+
 public:
 	static bool DebugMode;
 	static const std::vector<Engine::Point> directions;
@@ -40,12 +40,13 @@ public:
 	static const Engine::Point SpawnGridPoint;
 	static const Engine::Point EndGridPoint;
 	static const std::vector<int> code;
-	int MapId;
 	// multiplier for enemy count
 	// easy: 1.0, normal: 1.3, hard: 1.5
 	float difficulty;
 	float ticks;
 	float deathCountDown;
+	int MapId;
+
 	// Map tiles.
 	Group* TileMapGroup;
 	Group* GroundEffectGroup;
@@ -55,48 +56,61 @@ public:
 	Group* EnemyGroup;
 	Group* EffectGroup;
 	Group* UIGroup;
+	
 	Engine::Label* UIMoney;
 	Engine::Label* UIScore;
 	Engine::Label* UILives;
 	Engine::Image* imgTarget;
 	Engine::Sprite* dangerIndicator;
-	Turret* preview;
 	std::vector<std::vector<TileType>> mapState;
 	std::vector<std::vector<TileType>> originalMapState;
 	std::vector<std::vector<int>> mapDistance;
 	std::list<std::pair<int, float>> enemyWaveData;
-	
-	/// @brief store previous key strokes, use to activate cheat code
+	// store previous key strokes, use to activate cheat code
 	std::list<int> keyStrokes;
+
+
+	// mouse indicator
+	// Turret* preview;
 	
+// ========= Static Functions ============ // 
+
 	static Engine::Point GetClientSize();
+	
+// ========= Virtual Functions ============ // 
+
+	virtual void Initialize() override;
+	virtual void Terminate() override;
+	virtual void Draw() const override;
+	virtual void ConstructUI();
+	virtual void OnKeyDown(int keyCode) override;
+	virtual void Hit();
+
+// ========= Pure Virtual Functions ============ // 
+
+	virtual void Update(float deltaTime) override =0;
+	virtual void OnMouseMove(int mx, int my) override =0;
+	virtual void OnMouseUp(int button, int mx, int my) override =0;
+	virtual void UIBtnClicked(int id) =0;
+	virtual void OnMouseDown(int button, int mx, int my) override =0;
+	// place turret at (x,y) if possible
+	virtual void PlaceTurret(const int &x, const int &y) =0;
+	// delete turret (x,y) and return half of its price if exist
+	virtual void DeconstructTurret(const int &x, const int &y) =0;
+	virtual void UpdateDangerIndicator() =0;
+
+
+// ========= Non-Virtual Functions ============ // 
+
 	explicit PlayScene() = default;
-	void Initialize() override;
-	void Terminate() override;
-	void Update(float deltaTime) override;
-	void Draw() const override;
-	void OnMouseDown(int button, int mx, int my) override;
-	void OnMouseMove(int mx, int my) override;
-	void OnMouseUp(int button, int mx, int my) override;
-	void OnKeyDown(int keyCode) override;
-	void Hit();
+	void ExitOnClick();
 	int GetMoney() const;
 	int GetScore() const;
 	void EarnMoney(int money);
 	void EarnScore(int score);
 	void ReadMap();
-	void ReadEnemyWave();
-	void ConstructUI();
-	void UIBtnClicked(int id);
-	void ExitOnClick();
-	// place turret at (x,y) if possible
-	void PlaceTurret(const int &x, const int &y);
-	// delete turret (x,y) and return half of its price if exist
-	void DeconstructTurret(const int &x, const int &y);
-
 	// check whether a turret can be placed at (x,y)
 	bool CheckSpaceValid(int x, int y);
 	std::vector<std::vector<int>> CalculateBFSDistance();
-	// void ModifyReadMapTiles();
 };
 #endif // PLAYSCENE_HPP

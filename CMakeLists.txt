@@ -71,7 +71,8 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         Scene/DifficultySelectScene.cpp
         Scene/SettingsScene.cpp
         Scene/ScoreBoardScene.cpp
-)
+        Scene/NormalPlayScene.cpp
+    )
 
 
 target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/mlpack_x64-windows/include)

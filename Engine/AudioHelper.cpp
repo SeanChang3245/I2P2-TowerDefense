@@ -63,6 +63,9 @@ unsigned int AudioHelper::GetSampleLength(std::shared_ptr<ALLEGRO_SAMPLE_INSTANC
 	return al_get_sample_instance_length(sample_instance.get()) / al_get_sample_instance_frequency(sample_instance.get());
 }
 void AudioHelper::StopSample(std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> sample_instance) {
+	if(sample_instance == nullptr)
+		throw std::invalid_argument("can't pass a nullptr");
+	
 	if (!al_get_sample_instance_playing(sample_instance.get()))
 		return;
 	// No need to stop BGM by ourselves since the audio stops when the sample is destroyed.
@@ -70,4 +73,7 @@ void AudioHelper::StopSample(std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> sample_ins
 		Engine::LOG(Engine::INFO) << "failed to stop audio (sample)";
 	else
 		Engine::LOG(Engine::INFO) << "stopped audio (sample)";
+	
+	if(sample_instance == nullptr)
+		Engine::LOG(Engine::INFO) << "become nullptr";
 }

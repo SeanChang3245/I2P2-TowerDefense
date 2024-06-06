@@ -4,10 +4,11 @@
 #include "Engine/GameEngine.hpp"
 #include "Engine/LOG.hpp"
 #include "Scene/LoseScene.hpp"
-#include "Scene/PlayScene.hpp"
+#include "Scene/NormalPlayScene.hpp"
 #include "Scene/ReversePlayScene.hpp"
 #include "Scene/StageSelectScene.hpp"
 #include "Scene/DifficultySelectScene.hpp"
+#include "Scene/ModeSelectScene.hpp"
 #include "Scene/WinScene.hpp"
 #include "Scene/StartScene.h"
 #include "Scene/SettingsScene.hpp"
@@ -21,21 +22,26 @@ int main(int argc, char **argv) {
 
     // TODO: [HACKATHON-1-SCENE] (3/4): Register Scenes here
 	game.AddNewScene("start", new StartScene());
+
 	game.AddNewScene("stage-select", new StageSelectScene());
 	game.AddNewScene("difficulty-select", new DifficultySelectScene());
+	game.AddNewScene("mode-select", new ModeSelectScene());
+	
 	game.AddNewScene("map-create", new MapCreateScene());
 	game.AddNewScene("settings", new SettingsScene());
-	game.AddNewScene("play", new PlayScene());
-	game.AddNewScene("play-reverse", new ReversePlayScene());
-	game.AddNewScene("lose", new LoseScene());
 	game.AddNewScene("win", new WinScene());
+	
+	game.AddNewScene("play-normal", new NormalPlayScene());
+	game.AddNewScene("play-reverse", new ReversePlayScene());
+	
+	game.AddNewScene("lose", new LoseScene());
 	game.AddNewScene("scoreboard", new ScoreboardScene());
 
     // TODO: [HACKATHON-1-SCENE] (4/4): Change the start scene
 	
 
-	game.Start("play-reverse", 60, 1600, 832);
-	// game.Start("start", 60, 1600, 832);
+	// game.Start("play-reverse", 60, 1600, 832);
+	game.Start("start", 60, 1600, 832);
 	return 0;
 }
 

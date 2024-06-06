@@ -29,17 +29,17 @@ void ModeSelectScene::Initialize() {
     btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", halfW - 200, halfH / 2 - 50, 400, 100);
     btn->SetOnClickCallback(std::bind(&ModeSelectScene::PlayOnClick, this, NORMAL));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("easy", "pirulen.ttf", 48, halfW, halfH / 2, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Normal", "pirulen.ttf", 48, halfW, halfH / 2, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", halfW - 200, halfH /2 + 100, 400, 100);
     btn->SetOnClickCallback(std::bind(&ModeSelectScene::PlayOnClick, this, SURVIVAL));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("normal", "pirulen.ttf", 48, halfW, halfH / 2 + 150, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Survival", "pirulen.ttf", 48, halfW, halfH / 2 + 150, 0, 0, 0, 255, 0.5, 0.5));
 
     btn = new Engine::ImageButton("stage-select/dirt.png", "stage-select/floor.png", halfW - 200, halfH /2 + 250, 400, 100);
     btn->SetOnClickCallback(std::bind(&ModeSelectScene::PlayOnClick, this, REVERSE));
     AddNewControlObject(btn);
-    AddNewObject(new Engine::Label("hard", "pirulen.ttf", 48, halfW, halfH / 2 + 300, 0, 0, 0, 255, 0.5, 0.5));
+    AddNewObject(new Engine::Label("Reverse", "pirulen.ttf", 48, halfW, halfH / 2 + 300, 0, 0, 0, 255, 0.5, 0.5));
 }
 
 void ModeSelectScene::Terminate() {
@@ -48,12 +48,15 @@ void ModeSelectScene::Terminate() {
 }
 
 void ModeSelectScene::BackOnClick() {
-    Engine::GameEngine::GetInstance().ChangeScene("stage-select");
+    Engine::GameEngine::GetInstance().ChangeScene("difficulty-select");
 }
 
 void ModeSelectScene::PlayOnClick(PlayMode mode) {
     // PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
-    // Engine::GameEngine::GetInstance().ChangeScene("play");
-
-
+    if(mode == NORMAL)
+        Engine::GameEngine::GetInstance().ChangeScene("play-normal");
+    else if(mode == REVERSE)
+        Engine::GameEngine::GetInstance().ChangeScene("play-reverse");
+    else if(mode == SURVIVAL)
+        Engine::GameEngine::GetInstance().ChangeScene("play-survival");
 }

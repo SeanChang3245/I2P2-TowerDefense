@@ -9,8 +9,11 @@
 #include "LoseScene.hpp"
 #include "PlayScene.hpp"
 #include "Engine/Point.hpp"
+#include "Engine/LOG.hpp"
 
 void LoseScene::Initialize() {
+	Engine::LOG(Engine::INFO) << "enter lose scene init";
+
 	// TODO: [HACKATHON-1-SCENE] (1/4): You can imitate the 2 files: 'LoseScene.hpp', 'LoseScene.cpp' to implement your start scene.
 	int w = Engine::GameEngine::GetInstance().GetScreenSize().x;
 	int h = Engine::GameEngine::GetInstance().GetScreenSize().y;

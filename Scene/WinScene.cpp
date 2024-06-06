@@ -41,7 +41,7 @@ void WinScene::Terminate()
 void WinScene::Update(float deltaTime) {
 	ticks += deltaTime;
 	if (ticks > 4 && ticks < 100 &&
-		dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"))->MapId == 2) {
+		dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play-normal"))->MapId == 2) {
 		ticks = 100;
 		bgmId = AudioHelper::PlayBGM("happy.ogg");
 	}
@@ -63,6 +63,6 @@ void WinScene::OnKeyDown(int keyCode)
 
 void WinScene::handleUserInput()
 {
-	int final_score = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"))->GetScore();
+	int final_score = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetPreviousScene())->GetScore();
 	input_block->save_input_to_file(final_score);
 }

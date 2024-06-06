@@ -58,7 +58,11 @@ void DifficultySelectScene::BackOnClick() {
     Engine::GameEngine::GetInstance().ChangeScene("stage-select");
 }
 void DifficultySelectScene::PlayOnClick(float difficulty) {
-    PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play"));
+    PlayScene* scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play-normal"));
     scene->difficulty = difficulty;
-    Engine::GameEngine::GetInstance().ChangeScene("play");
+    scene = dynamic_cast<PlayScene*>(Engine::GameEngine::GetInstance().GetScene("play-reverse"));
+    scene->difficulty = difficulty;
+    
+    // Engine::GameEngine::GetInstance().ChangeScene("play-normal");
+    Engine::GameEngine::GetInstance().ChangeScene("mode-select");
 }

@@ -27,6 +27,8 @@ namespace Engine {
 		std::unordered_map<std::string, IScene*> scenes;
 		// The active scene that occupies the game's update, draw and various events.
 		IScene* activeScene{};
+		// Previous scene that is called
+		IScene* previousScene{};
 		// Allegro5 display for window creation.
 		ALLEGRO_DISPLAY* display{};
 		// Allegro5 event queue.
@@ -118,6 +120,11 @@ namespace Engine {
 		/// </summary>
 		/// <returns>Pointer to active scene.</returns>
 		IScene* GetActiveScene() const;
+		/// <summary>
+		/// Get the pointer of the previous scene.
+		/// </summary>
+		/// <returns>Pointer to previous scene.</returns>
+		IScene* GetPreviousScene() const;
 		/// <summary>
 		/// Get scene by name.
 		/// </summary>

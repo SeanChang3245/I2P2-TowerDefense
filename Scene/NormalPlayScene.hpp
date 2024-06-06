@@ -1,5 +1,5 @@
-#ifndef REVERSEPLAYSCENE_HPP
-#define REVERSEPLAYSCENE_HPP
+#ifndef NORMALPLAYSCENE_HPP
+#define NORMALPLAYSCENE_HPP
 #include <allegro5/allegro_audio.h>
 #include <list>
 #include <memory>
@@ -10,6 +10,7 @@
 #include "Engine/Point.hpp"
 #include "Scene/PlayScene.hpp"
 
+
 class Turret;
 namespace Engine {
 	class Group;
@@ -18,30 +19,12 @@ namespace Engine {
 	class Sprite;
 }  // namespace Engine
 
-class ReversePlayScene final : public PlayScene {
-
+class NormalPlayScene final : public PlayScene {
 private:
-	bool playing_danger_bgm;
-	// int lives;
-	// int money;
-	// int total_score;
-	// int SpeedMult;
-public:
-	// remaining time to play this round, lose if run out
-	float remain_time;
-	// the time interval between placing two turrets
-	static const float PlaceTurretDuration;
-	// remaining time to place next turret
-	float placeTurretCountDown;
-	Engine::Label* UITime;
-	Engine::Image* imgTarget;
-	// store the type of the turret, used to create a real turret
-	
-	
-	Turret *cur_turret;
-	Engine::Point turret_pos;
+	// std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE> deathBGMInstance;
 
-	
+public:
+	Turret* preview;
 	// static bool DebugMode;
 	// static const std::vector<Engine::Point> directions;
 	// static const int MapWidth, MapHeight;
@@ -51,10 +34,11 @@ public:
 	// static const Engine::Point EndGridPoint;
 	// static const std::vector<int> code;
 	// int MapId;
+	// multiplier for enemy count
+	// easy: 1.0, normal: 1.3, hard: 1.5
 	// float difficulty;
 	// float ticks;
 	// float deathCountDown;
-	// Engine::Sprite* dangerIndicator;
 	// Map tiles.
 	// Group* TileMapGroup;
 	// Group* GroundEffectGroup;
@@ -67,47 +51,45 @@ public:
 	// Engine::Label* UIMoney;
 	// Engine::Label* UIScore;
 	// Engine::Label* UILives;
-	// Turret* preview;
+	// Engine::Image* imgTarget;
+	// Engine::Sprite* dangerIndicator;
 	// std::vector<std::vector<TileType>> mapState;
 	// std::vector<std::vector<TileType>> originalMapState;
 	// std::vector<std::vector<int>> mapDistance;
+	// std::list<std::pair<int, float>> enemyWaveData;
 	/// @brief store previous key strokes, use to activate cheat code
 	// std::list<int> keyStrokes;
-
 	
-// ========= Virtual Functions Override ============ // 
-
+	
+// ========= Virtual Functions Override ============ // 	
+	
 	virtual void Initialize() override final;
 	virtual void ConstructUI() override final;
-	virtual void OnKeyDown(int keyCode) override final;
 	virtual void Hit() override final;
-
-// ========= Pure Virtual Functions Implement ============ // 
+	
+// ========= Pure Virtual Functions Implement ============ // 	
 
 	virtual void UIBtnClicked(int id) override final;
 	virtual void Update(float deltaTime) override final;
 	virtual void OnMouseDown(int button, int mx, int my) override final;
 	virtual void OnMouseMove(int mx, int my) override final;
-	virtual void OnMouseUp(int button, int mx, int my) override final;
-	virtual void UpdateDangerIndicator() override final;
-
+	virtual void OnMouseUp(int button, int mx, int my) override final; 
+	virtual void OnKeyDown(int keyCode) override final;
+	// place turret at (x,y) if possible
 	virtual void PlaceTurret(const int &x, const int &y) override final;
+	// delete turret (x,y) and return half of its price if exist
 	virtual void DeconstructTurret(const int &x, const int &y) override final;
+	virtual void UpdateDangerIndicator() override final;
 
 // ========= Non-Virtual Functions ============ // 	
 
-	void UpdateTimer(float deltaTime);
-	explicit ReversePlayScene() = default;
-	void ChooseTurretType();
-	void ChooseTurretPosition();
-	void UpdatePlaceTurret(float deltaTime);
-
-
+	explicit NormalPlayScene() = default;
+	void ReadEnemyWave();
 
 	// static Engine::Point GetClientSize();
-	// void Terminate() override;
-	// void Draw() const override;
+	// virtual void Draw() const override;
 	// void Hit();
+	// int GetMoney() const;
 	// int GetScore() const;
 	// void EarnMoney(int money);
 	// void EarnScore(int score);
