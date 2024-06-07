@@ -76,10 +76,10 @@ add_executable(2024_I2P2_TowerDefense_with_answer
     )
 
 
-target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/mlpack_x64-windows/include)
-target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/armadillo_x64-windows/include)
-target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/cereal_x64-windows/include)
-target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/ensmallen_x64-windows/include)
+# target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/mlpack_x64-windows/include)
+# target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/armadillo_x64-windows/include)
+# target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/cereal_x64-windows/include)
+# target_include_directories(2024_I2P2_TowerDefense_with_answer PRIVATE C:/vcpkg/packages/ensmallen_x64-windows/include)
 
 IF (WIN32)
     target_include_directories(2024_I2P2_TowerDefense_with_answer PUBLIC C:/allegro/include)

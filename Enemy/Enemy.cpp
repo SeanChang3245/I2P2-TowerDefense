@@ -102,7 +102,53 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 		num--;
 	}
 	path[0] = PlayScene::EndGridPoint;
+			
+	// for(int i = path.size()-1; i >= 0; --i)
+	// 	std::cout << path[i].x << ' ' << path[i].y << '\n';
 }
+
+void Enemy::UpdateIntermediatePath(const std::vector<std::vector<int>>& mapDistance) {
+	int x = static_cast<int>(floor(Position.x / PlayScene::BlockSize));
+	int y = static_cast<int>(floor(Position.y / PlayScene::BlockSize));
+
+	if (x < 0) x = 0;
+	if (x >= PlayScene::MapWidth) x = PlayScene::MapWidth - 1;
+	if (y < 0) y = 0;
+	if (y >= PlayScene::MapHeight) y = PlayScene::MapHeight - 1;
+	
+	Engine::Point pos(x, y);
+	int num = mapDistance[y][x];
+	if (num == -1) {
+		num = 0;
+		Engine::LOG(Engine::ERROR) << "Enemy path finding error";
+	}
+	intermediate_path.clear();
+	while (num != 0) {
+		std::vector<Engine::Point> nextHops;
+		for (auto& dir : PlayScene::directions) {
+			int x = pos.x + dir.x;
+			int y = pos.y + dir.y;
+			if (x < 0 || x >= PlayScene::MapWidth || y < 0 || y >= PlayScene::MapHeight || mapDistance[y][x] != num - 1)
+				continue;
+			nextHops.emplace_back(x, y);
+		}
+		// There might be multiple shortest path to the end point
+		// Choose arbitrary one.
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dist(0, nextHops.size() - 1);
+		pos = nextHops[dist(rng)];
+		intermediate_path.push_front(pos);
+		num--;
+	}
+
+	// path[0] = PlayScene::EndGridPoint;
+	
+			
+	for(int i = intermediate_path.size()-1; i >= 0; --i)
+		std::cout << intermediate_path[i].x << ' ' << intermediate_path[i].y << '\n';
+}
+
 void Enemy::Update(float deltaTime) {
 	// Pre-calculate the velocity.
 
@@ -160,6 +206,11 @@ int Enemy::get_kill_score() const
 void Enemy::set_froze_timer(float duration)
 {
 	this->froze_count_down = duration;
+}
+
+void Enemy::set_pass_intermediate_point(bool pass)
+{
+	pass_intermediate_point = pass;
 }
 
 // int Enemy::get_cost() const 

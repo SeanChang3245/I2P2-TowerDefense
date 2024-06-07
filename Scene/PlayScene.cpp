@@ -7,6 +7,7 @@
 #include <queue>
 #include <string>
 #include <memory>
+#include <iomanip>
 
 #include "Engine/AudioHelper.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
@@ -462,6 +463,46 @@ bool PlayScene::CheckSpaceValid(int x, int y)
 	return true;
 }
 
+std::vector<std::vector<int>> PlayScene::CheckSpaceValid2(int x, int y)
+{
+	// a turret can be placed on TILE_DIRT or TILE_FLOOR
+	std::vector<std::vector<int>> ans;
+	if (x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
+		return ans;
+	if(mapState[y][x] == TILE_OCCUPIED)
+		return ans;
+	TileType originalState = mapState[y][x];
+
+	// assume a turret has been placed, will it blocks enemy's path
+	mapState[y][x] = TILE_OCCUPIED;
+	std::vector<std::vector<int>> map = CalculateBFSDistance();
+	mapState[y][x] = originalState;
+	if (map[0][0] == -1) // the path from start point to end point is blocked
+		return ans;
+	for (auto &it : EnemyGroup->GetObjects())
+	{
+		Engine::Point pnt;
+		pnt.x = floor(it->Position.x / BlockSize);
+		pnt.y = floor(it->Position.y / BlockSize);
+		if (pnt.x < 0)
+			pnt.x = 0;
+		if (pnt.x >= MapWidth)
+			pnt.x = MapWidth - 1;
+		if (pnt.y < 0)
+			pnt.y = 0;
+		if (pnt.y >= MapHeight)
+			pnt.y = MapHeight - 1;
+		if (map[pnt.y][pnt.x] == -1) // the turrect is placed on a enemy or enemy is enclosed in a room
+			return ans;
+	}
+	// All enemy have path to exit, hence the turrect can be placed at (x,y)
+	// mapState[y][x] = TILE_OCCUPIED;
+	ans = map;
+	for (auto &it : EnemyGroup->GetObjects())
+		dynamic_cast<Enemy *>(it)->UpdatePath(ans);
+	return ans;
+}
+
 std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
 {
 	// Reverse BFS to find path.
@@ -512,6 +553,61 @@ std::vector<std::vector<int>> PlayScene::CalculateBFSDistance()
 		{
 			for (const auto &dist : v)
 				std::cout << dist << ' ';
+			std::cout << '\n';
+		}
+	}
+	return map;
+}
+
+std::vector<std::vector<int>> PlayScene::CalculateBFSDistance(int x, int y)
+{
+	if(x < 0 || x >= MapWidth || y < 0 || y >= MapHeight)
+		throw std::invalid_argument("position is not valid, call at " + std::string(__FILE__) + "::" + std::to_string(__LINE__));
+	// Reverse BFS to find path.
+	std::vector<std::vector<int>> map(MapHeight, std::vector<int>(std::vector<int>(MapWidth, -1)));
+	std::queue<Engine::Point> que;
+	// Push the point (x,y).
+	// BFS from (x,y).
+	if (mapState[y][x] != TILE_DIRT)
+		return map;
+	que.push(Engine::Point(x, y));
+	map[y][x] = 0;
+
+	int cur_dist = 0;
+	while (!que.empty())
+	{
+		int s = que.size();
+		while (s--)
+		{
+			Engine::Point p = que.front();
+			que.pop();
+
+			for (const auto &dir : directions)
+			{
+				int nextX = (dir + p).x;
+				int nextY = (dir + p).y;
+
+				if (nextX < 0 || nextX >= MapWidth ||
+					nextY < 0 || nextY >= MapHeight ||
+					mapState[nextY][nextX] == TILE_FLOOR ||
+					mapState[nextY][nextX] == TILE_OCCUPIED ||
+					map[nextY][nextX] != -1) // the tile is floor but its shortest distance has been updated
+					continue;
+
+				map[nextY][nextX] = cur_dist + 1;
+				que.emplace(Engine::Point(nextX, nextY));
+			}
+		}
+		++cur_dist;
+	}
+
+	if (PRINT_INTERMEDIATE_MAP_DISTANCE)
+	{
+		Engine::LOG(Engine::INFO) << "map distance information";
+		for (const auto &v : map)
+		{
+			for (const auto &dist : v)
+				std::cout << std::setw(2) << dist << ' ';
 			std::cout << '\n';
 		}
 	}

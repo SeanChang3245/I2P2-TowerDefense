@@ -3,6 +3,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <deque>
 
 #include "Engine/Point.hpp"
 #include "Engine/Sprite.hpp"
@@ -14,8 +15,14 @@ class Turret;
 
 class Enemy : public Engine::Sprite {
 protected:
+
 	Engine::IScene *sceneType;
+	// Path to the end point
  	std::vector<Engine::Point> path;
+	// Path to the intermediate point
+	std::deque<Engine::Point> intermediate_path;
+	// Check whether the enemy have pass the intermediate point
+	bool pass_intermediate_point;
 
 	// // The cost to spawn the enemy in reverse mode
 	// const int Cost;
@@ -44,10 +51,12 @@ public:
 	Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money);
  	void Hit(float damage);
 	void UpdatePath(const std::vector<std::vector<int>>& mapDistance);
+	void UpdateIntermediatePath(const std::vector<std::vector<int>>& mapDistance);
 	void Update(float deltaTime) override;
 	void Draw() const override;
 	int get_kill_score() const;
 	void set_froze_timer(float duration);
+	void set_pass_intermediate_point(bool pass);
 
 	// float get_max_HP() const;
 	// int get_cost() const;

@@ -64,6 +64,7 @@ void ReversePlayScene::Initialize()
 	playing_danger_bgm = false;
 	cur_turret = nullptr;
 	turret_pos.x = turret_pos.y = -1;
+	intermediate_point.x = intermediate_point.y = -1;
 
 	SetChooseTurretPositionFunc(std::bind(&ReversePlayScene::TurretPosision_RandomPosOnRandomPath, this));
 }
@@ -89,6 +90,11 @@ void ReversePlayScene::Update(float deltaTime)
 
 void ReversePlayScene::OnMouseDown(int button, int mx, int my)
 {
+	const int x = mx / BlockSize;
+	const int y = my / BlockSize;
+	if(button == 2)
+		set_intermediate_point(x, y);
+
 	IScene::OnMouseDown(button, mx, my);
 }
 
@@ -256,6 +262,7 @@ void ReversePlayScene::UIBtnClicked(int id)
     enemy->UpdatePath(mapDistance);
     enemy->Update(ticks);
 
+	// check pass intermediate point
 }
 
 
@@ -268,6 +275,9 @@ void ReversePlayScene::UpdateTimer(float deltaTime)
 	std::string minute = std::to_string(I/60);
 	std::string second = std::to_string(I%60);
 	std::string decimal = std::to_string(D).substr(2, 2);
+
+	if(second.size() == 1)
+		second = "0" + second;
 
 	UITime->Text = minute + ":" + second + "." + decimal;
 }
@@ -492,6 +502,30 @@ Engine::Point ReversePlayScene::closet_valid_space(Engine::Point p)
 	}
 	// can't find any space
 	return Engine::Point(-1, -1);
+}
+
+void ReversePlayScene::set_intermediate_point(int x, int y)
+{
+	if(mapState[y][x] != TILE_DIRT)
+	{
+		intermediate_point.x = intermediate_point.y = -1;
+
+	}
+	else
+	{
+		intermediate_point.x = x;
+		intermediate_point.y = y;
+		intermediateMapDistance = CalculateBFSDistance(x, y);
+		for(auto &it : EnemyGroup->GetObjects())
+		{
+			Enemy* enemy = dynamic_cast<Enemy*>(it);
+			enemy->UpdateIntermediatePath(intermediateMapDistance);
+			enemy->set_pass_intermediate_point(false);
+		}
+	}
+
+	// update enemy path
+	// show icon on intermediate point
 }
 
 void ReversePlayScene::DeconstructTurret(const int &x, const int &y) {}

@@ -23,6 +23,11 @@ class ReversePlayScene final : public PlayScene {
 
 private:
 	bool playing_danger_bgm;
+	Engine::Point intermediate_point;
+
+	// Store the distacne to the intermediate point
+	std::vector<std::vector<int>> intermediateMapDistance;
+
 	// int lives;
 	// int money;
 	// int total_score;
@@ -110,6 +115,7 @@ public:
 	void ChooseTurretType();
 	void UpdatePlaceTurret(float deltaTime);
 	void SetChooseTurretPositionFunc(std::function<void(void)> selectFunc);
+	void set_intermediate_point(int x, int y);
 
 // ========= Script Functions ============ // 	
 

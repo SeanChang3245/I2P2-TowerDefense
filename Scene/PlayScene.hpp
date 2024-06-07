@@ -64,9 +64,10 @@ public:
 	Engine::Sprite* dangerIndicator;
 	std::vector<std::vector<TileType>> mapState;
 	std::vector<std::vector<TileType>> originalMapState;
+	// Store the distance to the end point
 	std::vector<std::vector<int>> mapDistance;
 	std::list<std::pair<int, float>> enemyWaveData;
-	// store previous key strokes, use to activate cheat code
+	// Store previous key strokes, use to activate cheat code
 	std::list<int> keyStrokes;
 
 
@@ -112,7 +113,11 @@ public:
 	void ReadMap();
 	// check whether a turret can be placed at (x,y)
 	bool CheckSpaceValid(int x, int y);
+	std::vector<std::vector<int>> CheckSpaceValid2(int x, int y);
+	// Calculate the distance to the end point
 	std::vector<std::vector<int>> CalculateBFSDistance();
+	// Calculate the distance to the point (x,y)
+	std::vector<std::vector<int>> CalculateBFSDistance(int x, int y);
 	
 };
 #endif // PLAYSCENE_HPP

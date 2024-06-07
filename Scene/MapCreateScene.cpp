@@ -125,11 +125,13 @@ void MapCreateScene::OnMouseMove(int mx, int my)
     if(left_button_down && mapState[y][x] != TILE_FLOOR)
     {
         place_floor_block(x, y);
+		// update new map distance
         mapDistance = CalculateBFSDistance();
     }
     else if(right_button_down && mapState[y][x] != TILE_DIRT)
     {
         place_dirt_block(x, y);
+		// update new map distance
         mapDistance = CalculateBFSDistance();
     }
 
