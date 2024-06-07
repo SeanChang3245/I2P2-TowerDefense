@@ -12,7 +12,7 @@ class HoverTurretButton : public Engine::HoverImageButton
 protected:
     PlayScene* getPlayScene();
 public:
-    int money;
+    int cost;
     Engine::Sprite Base;
     Engine::Sprite Turret;
 

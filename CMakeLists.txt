@@ -41,6 +41,7 @@ add_executable(2024_I2P2_TowerDefense_with_answer
         UI/Component/TextInput.cpp
         UI/Component/ImageButton.cpp
         UI/Component/HoverImageButton.cpp
+        UI/Component/EnemyButton.cpp
         UI/Component/Label.cpp
         UI/Animation/Plane.cpp
         UI/Component/Slider.cpp

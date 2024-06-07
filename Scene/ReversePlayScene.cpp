@@ -15,6 +15,7 @@
 #include "Engine/Group.hpp"
 #include "UI/Component/Label.hpp"
 #include "UI/Component/HoverImageButton.hpp"
+#include "UI/Component/EnemyButton.hpp"
 #include "Turret/LaserTurret.hpp"
 #include "Turret/MachineGunTurret.hpp"
 #include "Turret/MissileTurret.hpp"
@@ -143,53 +144,61 @@ void ReversePlayScene::ConstructUI()
 	// Text
 	UIGroup->AddNewObject(UITime = new Engine::Label(std::string("time") + std::to_string(remain_time), "pirulen.ttf", 24, 1294, 168));
 
-	Engine::HoverImageButton *btn;
+	Engine::EnemyButton *btn;
 	const int information_x = 1294;
 	const int information_y = 400;
 
 	// Soldier Enemy 
-	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
+	btn = new Engine::EnemyButton("play/floor.png", "play/dirt.png", "play/enemy-1.png",
 		1294, 216,
 		information_x, information_y,
+		64, 64, 
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 0));
 	btn->AddNewInformation(std::string("Cost: ") + std::to_string(SoldierEnemy::Cost));
 	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(SoldierEnemy::HP)));
 	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(SoldierEnemy::Speed)));
+	btn->SetCostValue(SoldierEnemy::Cost);
 	UIGroup->AddNewControlObject(btn);
 	
 
 	// Plane Enemy 
-	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
+	btn = new Engine::EnemyButton("play/floor.png", "play/dirt.png", "play/enemy-2.png",
 		1370, 216,
 		information_x, information_y,
+		64, 64,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 1));
 	btn->AddNewInformation(std::string("Cost: ") + std::to_string(PlaneEnemy::Cost));
 	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(PlaneEnemy::HP)));
 	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(PlaneEnemy::Speed)));
+	btn->SetCostValue(PlaneEnemy::Cost);
 	UIGroup->AddNewControlObject(btn);
 
 	// Tank Enemy 
-	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
+	btn = new Engine::EnemyButton("play/floor.png", "play/dirt.png", "play/enemy-3-full.png",
 		1446, 216,
 		information_x, information_y,
+		64, 64,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 2));
 	btn->AddNewInformation(std::string("Cost: ") + std::to_string(TankEnemy::Cost));
 	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(TankEnemy::HP)));
 	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(TankEnemy::Speed)));
+	btn->SetCostValue(TankEnemy::Cost);
 	UIGroup->AddNewControlObject(btn);
 
 	// Advanced Tank Enemy 
-	btn = new Engine::HoverImageButton("play/floor.png", "play/dirt.png",
+	btn = new Engine::EnemyButton("play/floor.png", "play/dirt.png", "play/enemy-4.png",
 		1522, 216,
 		information_x, information_y,
+		64, 64,
 		0, 0, 0, 255);
 	btn->SetOnClickCallback(std::bind(&ReversePlayScene::UIBtnClicked, this, 3));
 	btn->AddNewInformation(std::string("Cost: ") + std::to_string(AdvancedTankEnemy::Cost));
 	btn->AddNewInformation(std::string("HP: ") + std::to_string(static_cast<int>(AdvancedTankEnemy::HP)));
 	btn->AddNewInformation(std::string("Speed: ") + std::to_string(static_cast<int>(AdvancedTankEnemy::Speed)));
+	btn->SetCostValue(AdvancedTankEnemy::Cost);
 	UIGroup->AddNewControlObject(btn);
 
 

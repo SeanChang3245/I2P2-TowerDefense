@@ -17,7 +17,7 @@ HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine:
 			int inf_x, int inf_y,
 			unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
 			int cost, int range, int damage, float reload) :
-		money(cost), Base(Base), Turret(Turret),
+		cost(cost), Base(Base), Turret(Turret),
 		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, r, g, b, a)
 {
 	AddNewInformation("Cost: " + std::to_string(cost));
@@ -31,7 +31,7 @@ HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine:
 			int inf_x, int inf_y,
 			unsigned char r, unsigned char g, unsigned char b, unsigned char a, 
 			std::vector<std::string> details) :
-		Base(Base), Turret(Turret), money(0),
+		Base(Base), Turret(Turret), cost(0),
 		HoverImageButton(img, imgIn, img_x, img_y, inf_x, inf_y, r, g, b, a)
 {
 	for(const auto &str : details)
@@ -42,7 +42,7 @@ HoverTurretButton::HoverTurretButton(std::string img, std::string imgIn, Engine:
 
 void HoverTurretButton::Update(float deltaTime) {
 	HoverImageButton::Update(deltaTime);
-	if (getPlayScene()->GetMoney() >= money) {
+	if (getPlayScene()->GetMoney() >= cost) {
 		Enabled = true;
 		Base.Tint = Turret.Tint = al_map_rgba(255, 255, 255, 255);
 	} else {

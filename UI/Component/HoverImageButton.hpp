@@ -7,7 +7,6 @@
 #include <list>
 #include <string>
 
-const int ROW_SPACING = 30;
 
 namespace Engine 
 {
@@ -33,6 +32,12 @@ namespace Engine
 		explicit HoverImageButton(std::string img, std::string imgIn, 
                 int  img_x, int  img_y,
                 int  inf_x , int  inf_y,
+                unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+                
+		explicit HoverImageButton(std::string img, std::string imgIn, 
+                int  img_x, int  img_y,
+                int  inf_x , int  inf_y,
+                int w, int h,
                 unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 
         void OnMouseMove(int mx, int my) override;
