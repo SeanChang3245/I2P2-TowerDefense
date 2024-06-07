@@ -44,7 +44,8 @@ void Enemy::OnExplode() {
 }
 
 Enemy::Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money) :
-	Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money) {
+	Engine::Sprite(img, x, y), speed(speed), hp(hp), money(money)
+{
 	CollisionRadius = radius;
 	reachEndTime = 0;
 	froze_count_down = 0;
@@ -160,3 +161,18 @@ void Enemy::set_froze_timer(float duration)
 {
 	this->froze_count_down = duration;
 }
+
+// int Enemy::get_cost() const 
+// {	
+// 	return Cost;
+// }
+
+// float Enemy::get_max_HP() const
+// {
+// 	return MaxHP;
+// }
+
+// float Enemy::get_speed() const
+// {
+// 	return Speed;
+// }

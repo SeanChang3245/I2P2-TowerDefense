@@ -63,6 +63,8 @@ void ReversePlayScene::Initialize()
 	playing_danger_bgm = false;
 	cur_turret = nullptr;
 	turret_pos.x = turret_pos.y = -1;
+
+	SetChooseTurretPositionFunc(std::bind(&ReversePlayScene::TurretPosision_Random, this));
 }
 
 void ReversePlayScene::Update(float deltaTime)
@@ -269,50 +271,6 @@ void ReversePlayScene::UpdateTimer(float deltaTime)
 	UITime->Text = minute + ":" + second + "." + decimal;
 }
 
-
-void ReversePlayScene::DeconstructTurret(const int &x, const int &y)
-{
-	// if (!preview || preview->GetType() != TOOL)
-	// 	return;
-	// // Check if turret can be place at (x,y)
-	// Engine::Point cur_mouse_position(x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2);
-
-	// Turret *target_turret = nullptr;
-	// for(auto &it : this->TowerGroup->GetObjects())
-	// {
-	// 	Turret* turret = dynamic_cast<Turret*>(it);
-	// 	if(!turret->Visible)
-	// 		continue;
-	// 	if(cur_mouse_position == turret->Position)
-	// 	{
-	// 		target_turret = turret;
-	// 		break;
-	// 	}
-	// }
-	
-	// if(target_turret == nullptr)
-	// 	return;
-
-	// // Get money back.
-	// EarnMoney(target_turret->GetPrice() / 2);
-
-	// // Remove Preview.
-	// preview->GetObjectIterator()->first = false;
-	// UIGroup->RemoveObject(preview->GetObjectIterator());
-
-	// // Delete target turret.
-	// TowerGroup->RemoveObject(target_turret->GetObjectIterator());
-
-	// // To keep responding when paused.
-	// preview->Update(0);
-	
-	// // Remove Preview.
-	// preview = nullptr;
-
-	// // Give Back Space
-	// mapState[y][x] = originalMapState[y][x];
-}
-
 void ReversePlayScene::Hit()
 {
 	PlayScene::Hit();
@@ -367,31 +325,6 @@ void ReversePlayScene::UpdatePlaceTurret(float deltaTime)
 	PlaceTurret(turret_pos.x, turret_pos.y);
 
 	placeTurretCountDown = PlaceTurretDuration;
-
-	cout << turret_pos.x << ' ' << turret_pos.y << '\n';
-}
-
-void ReversePlayScene::ChooseTurretPosition()
-{
-	int x, y;
-	srand(time(NULL));
-
-	int mostTry = 10;
-	while(mostTry--)
-	{
-		x = rand();
-		y = rand();
-		x %= MapWidth;
-		y %= MapHeight;
-		if(CheckSpaceValid(x, y))
-		{
-			turret_pos.x = x;
-			turret_pos.y = y;
-			return;
-		}
-	}
-	turret_pos.x = turret_pos.y = -1;
-	LOG(INFO) << "miss one turret";
 }
 
 void ReversePlayScene::ChooseTurretType()
@@ -446,6 +379,38 @@ void ReversePlayScene::PlaceTurret(const int &x, const int &y)
 	mapState[y][x] = TILE_OCCUPIED;
 }
 
+void ReversePlayScene::SetChooseTurretPositionFunc(std::function<void(void)> selectFunc)
+{
+	ChooseTurretPosition = selectFunc;
+}
+
+void ReversePlayScene::TurretPosision_Random()
+{
+	int x, y;
+	srand(time(NULL));
+
+	int mostTry = 10;
+	while(mostTry--)
+	{
+		x = rand();
+		y = rand();
+		x %= MapWidth;
+		y %= MapHeight;
+		if(CheckSpaceValid(x, y))
+		{
+			turret_pos.x = x;
+			turret_pos.y = y;
+			return;
+		}
+	}
+	turret_pos.x = turret_pos.y = -1;
+	LOG(INFO) << "miss one turret";
+}
+
+void ReversePlayScene::TurretPosision_RandomPosOnRandomPath()
+{
+
+}
 
 // void ReversePlayScene::Terminate()
 // {
@@ -453,3 +418,48 @@ void ReversePlayScene::PlaceTurret(const int &x, const int &y)
 // 	deathBGMInstance = std::shared_ptr<ALLEGRO_SAMPLE_INSTANCE>();
 // 	PlayScene::Terminate();
 // }
+
+
+
+void ReversePlayScene::DeconstructTurret(const int &x, const int &y)
+{
+	// if (!preview || preview->GetType() != TOOL)
+	// 	return;
+	// // Check if turret can be place at (x,y)
+	// Engine::Point cur_mouse_position(x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2);
+
+	// Turret *target_turret = nullptr;
+	// for(auto &it : this->TowerGroup->GetObjects())
+	// {
+	// 	Turret* turret = dynamic_cast<Turret*>(it);
+	// 	if(!turret->Visible)
+	// 		continue;
+	// 	if(cur_mouse_position == turret->Position)
+	// 	{
+	// 		target_turret = turret;
+	// 		break;
+	// 	}
+	// }
+	
+	// if(target_turret == nullptr)
+	// 	return;
+
+	// // Get money back.
+	// EarnMoney(target_turret->GetPrice() / 2);
+
+	// // Remove Preview.
+	// preview->GetObjectIterator()->first = false;
+	// UIGroup->RemoveObject(preview->GetObjectIterator());
+
+	// // Delete target turret.
+	// TowerGroup->RemoveObject(target_turret->GetObjectIterator());
+
+	// // To keep responding when paused.
+	// preview->Update(0);
+	
+	// // Remove Preview.
+	// preview = nullptr;
+
+	// // Give Back Space
+	// mapState[y][x] = originalMapState[y][x];
+}

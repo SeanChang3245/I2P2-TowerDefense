@@ -16,6 +16,16 @@ class Enemy : public Engine::Sprite {
 protected:
 	Engine::IScene *sceneType;
  	std::vector<Engine::Point> path;
+
+	// // The cost to spawn the enemy in reverse mode
+	// const int Cost;
+	// // The maximum HP the enemy can have
+	// const float MaxHP;
+	// const float Speed;
+	// // The money the user will earn if kill the enemy in normal mode
+	// const int Money;
+	// const int KillScore;
+
 	float speed;
 	float hp;
 	float froze_count_down;
@@ -38,5 +48,9 @@ public:
 	void Draw() const override;
 	int get_kill_score() const;
 	void set_froze_timer(float duration);
+
+	// float get_max_HP() const;
+	// int get_cost() const;
+	// float get_speed() const;
 };
 #endif // ENEMY_HPP

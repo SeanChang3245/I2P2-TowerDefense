@@ -5,6 +5,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include <functional>
 
 #include "Engine/IScene.hpp"
 #include "Engine/Point.hpp"
@@ -26,6 +27,10 @@ private:
 	// int money;
 	// int total_score;
 	// int SpeedMult;
+
+	std::vector<Engine::Point> choose_random_path();
+	Engine::Point closet_valid_space();
+
 public:
 	// remaining time to play this round, lose if run out
 	float remain_time;
@@ -40,6 +45,8 @@ public:
 	
 	Turret *cur_turret;
 	Engine::Point turret_pos;
+	// The function that decide where the program should put turret
+	std::function<void()> ChooseTurretPosition;
 
 	
 	// static bool DebugMode;
@@ -99,10 +106,13 @@ public:
 	void UpdateTimer(float deltaTime);
 	explicit ReversePlayScene() = default;
 	void ChooseTurretType();
-	void ChooseTurretPosition();
 	void UpdatePlaceTurret(float deltaTime);
+	void SetChooseTurretPositionFunc(std::function<void(void)> selectFunc);
 
+// ========= Script Functions ============ // 	
 
+	void TurretPosision_Random();
+	void TurretPosision_RandomPosOnRandomPath();	
 
 	// static Engine::Point GetClientSize();
 	// void Terminate() override;
