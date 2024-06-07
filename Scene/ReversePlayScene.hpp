@@ -28,8 +28,10 @@ private:
 	// int total_score;
 	// int SpeedMult;
 
+	// Choose a random valid path from spawn to end
 	std::vector<Engine::Point> choose_random_path();
-	Engine::Point closet_valid_space();
+	// Given a point p, search for the nearest point that can place turret
+	Engine::Point closet_valid_space(Engine::Point p);
 
 public:
 	// remaining time to play this round, lose if run out

@@ -7,6 +7,7 @@
 #include <queue>
 #include <string>
 #include <memory>
+#include <random>
 
 #include "Engine/AudioHelper.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
@@ -64,7 +65,7 @@ void ReversePlayScene::Initialize()
 	cur_turret = nullptr;
 	turret_pos.x = turret_pos.y = -1;
 
-	SetChooseTurretPositionFunc(std::bind(&ReversePlayScene::TurretPosision_Random, this));
+	SetChooseTurretPositionFunc(std::bind(&ReversePlayScene::TurretPosision_RandomPosOnRandomPath, this));
 }
 
 void ReversePlayScene::Update(float deltaTime)
@@ -409,8 +410,92 @@ void ReversePlayScene::TurretPosision_Random()
 
 void ReversePlayScene::TurretPosision_RandomPosOnRandomPath()
 {
+	std::vector<Engine::Point> path = choose_random_path();
 
+	std::random_device dev;
+	std::mt19937 rng(dev());
+	std::uniform_int_distribution<std::mt19937::result_type> dist(0, path.size() - 1);
+
+	Engine::Point random_point = path.at(dist(rng));
+	Engine::Point target_point = closet_valid_space(random_point);
+
+	turret_pos = target_point;
+	if(turret_pos.x == -1 || turret_pos.y == -1)
+	{
+		LOG(INFO) << "miss one turret";
+	}
 }
+
+std::vector<Engine::Point> ReversePlayScene::choose_random_path()
+{
+	vector<Engine::Point> path;
+	int x = 0;
+	int y = 0;
+	
+	Engine::Point pos(x, y);
+	int num = mapDistance[y][x];
+	if (num == -1) {
+		num = 0;
+		Engine::LOG(Engine::ERROR) << "Enemy path finding error";
+	}
+
+	path = std::vector<Engine::Point>(num + 1);
+	while (num != 0) {
+		std::vector<Engine::Point> nextHops;
+		for (auto& dir : PlayScene::directions) {
+			int x = pos.x + dir.x;
+			int y = pos.y + dir.y;
+			if (x < 0 || x >= PlayScene::MapWidth || y < 0 || y >= PlayScene::MapHeight || mapDistance[y][x] != num - 1)
+				continue;
+			nextHops.emplace_back(x, y);
+		}
+		// There might be multiple shortest path to the end point
+		// Choose arbitrary one.
+		std::random_device dev;
+		std::mt19937 rng(dev());
+		std::uniform_int_distribution<std::mt19937::result_type> dist(0, nextHops.size() - 1);
+		pos = nextHops[dist(rng)];
+		path[num] = pos;
+		num--;
+	}
+	path[0] = PlayScene::EndGridPoint;
+	return path;
+}
+
+Engine::Point ReversePlayScene::closet_valid_space(Engine::Point p)
+{
+	queue<Engine::Point> que;
+	vector<vector<bool>> visit(MapHeight, vector<bool>(MapWidth, false));
+	que.push(p);
+	visit[p.y][p.x] = true;
+
+	while (que.size())
+	{
+		Engine::Point cur_pos = que.front();
+		que.pop();
+
+		if(CheckSpaceValid(cur_pos.x, cur_pos.y))
+			return cur_pos;
+		
+		for(const auto &dir : PlayScene::directions)
+		{
+			int x = cur_pos.x + dir.x;
+			int y = cur_pos.y + dir.y;
+			if (x < 0 || x >= PlayScene::MapWidth || y < 0 || y >= PlayScene::MapHeight || visit[y][x])
+				continue;
+			
+			visit[y][x] = true;
+			que.push(Engine::Point(x, y));
+		}
+		
+
+	}
+	// can't find any space
+	return Engine::Point(-1, -1);
+}
+
+void ReversePlayScene::DeconstructTurret(const int &x, const int &y) {}
+
 
 // void ReversePlayScene::Terminate()
 // {
@@ -419,47 +504,3 @@ void ReversePlayScene::TurretPosision_RandomPosOnRandomPath()
 // 	PlayScene::Terminate();
 // }
 
-
-
-void ReversePlayScene::DeconstructTurret(const int &x, const int &y)
-{
-	// if (!preview || preview->GetType() != TOOL)
-	// 	return;
-	// // Check if turret can be place at (x,y)
-	// Engine::Point cur_mouse_position(x * BlockSize + BlockSize / 2, y * BlockSize + BlockSize / 2);
-
-	// Turret *target_turret = nullptr;
-	// for(auto &it : this->TowerGroup->GetObjects())
-	// {
-	// 	Turret* turret = dynamic_cast<Turret*>(it);
-	// 	if(!turret->Visible)
-	// 		continue;
-	// 	if(cur_mouse_position == turret->Position)
-	// 	{
-	// 		target_turret = turret;
-	// 		break;
-	// 	}
-	// }
-	
-	// if(target_turret == nullptr)
-	// 	return;
-
-	// // Get money back.
-	// EarnMoney(target_turret->GetPrice() / 2);
-
-	// // Remove Preview.
-	// preview->GetObjectIterator()->first = false;
-	// UIGroup->RemoveObject(preview->GetObjectIterator());
-
-	// // Delete target turret.
-	// TowerGroup->RemoveObject(target_turret->GetObjectIterator());
-
-	// // To keep responding when paused.
-	// preview->Update(0);
-	
-	// // Remove Preview.
-	// preview = nullptr;
-
-	// // Give Back Space
-	// mapState[y][x] = originalMapState[y][x];
-}
