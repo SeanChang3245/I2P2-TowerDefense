@@ -86,10 +86,10 @@ public:
 	virtual void ConstructUI();
 	virtual void OnKeyDown(int keyCode) override;
 	virtual void Hit();
-	virtual void ActivateCheatMode();
 
 // ========= Pure Virtual Functions ============ // 
 
+	virtual void ActivateCheatMode() =0;
 	virtual void Update(float deltaTime) override =0;
 	virtual void OnMouseMove(int mx, int my) override =0;
 	virtual void OnMouseUp(int button, int mx, int my) override =0;

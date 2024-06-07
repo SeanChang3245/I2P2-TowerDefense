@@ -108,6 +108,12 @@ void Enemy::UpdatePath(const std::vector<std::vector<int>>& mapDistance) {
 }
 
 void Enemy::UpdateIntermediatePath(const std::vector<std::vector<int>>& mapDistance) {
+	if(mapDistance.empty())
+	{
+		intermediate_path.clear();
+		return;
+	}
+	
 	int x = static_cast<int>(floor(Position.x / PlayScene::BlockSize));
 	int y = static_cast<int>(floor(Position.y / PlayScene::BlockSize));
 
@@ -120,7 +126,7 @@ void Enemy::UpdateIntermediatePath(const std::vector<std::vector<int>>& mapDista
 	int num = mapDistance[y][x];
 	if (num == -1) {
 		num = 0;
-		Engine::LOG(Engine::ERROR) << "Enemy path finding error";
+		Engine::LOG(Engine::ERROR) << "Enemy intermediate path finding error";
 	}
 	intermediate_path.clear();
 	while (num != 0) {
@@ -145,8 +151,8 @@ void Enemy::UpdateIntermediatePath(const std::vector<std::vector<int>>& mapDista
 	// path[0] = PlayScene::EndGridPoint;
 	
 			
-	for(int i = intermediate_path.size()-1; i >= 0; --i)
-		std::cout << intermediate_path[i].x << ' ' << intermediate_path[i].y << '\n';
+	// for(int i = intermediate_path.size()-1; i >= 0; --i)
+	// 	std::cout << intermediate_path[i].x << ' ' << intermediate_path[i].y << '\n';
 }
 
 void Enemy::Update(float deltaTime) {
@@ -159,36 +165,112 @@ void Enemy::Update(float deltaTime) {
 	else
 		froze_count_down = 0;
 
-	while (remainSpeed != 0) {
-		if (path.empty()) {
-			// Reach end point.
-			Hit(hp);
-			getPlayScene()->Hit();
-			reachEndTime = 0;
-			return;
+	while (remainSpeed != 0) 
+	{
+		if(intermediate_path.size() && !pass_intermediate_point)
+		{
+			Engine::Point target = intermediate_path.back() * PlayScene::BlockSize + Engine::Point(PlayScene::BlockSize / 2, PlayScene::BlockSize / 2);
+			Engine::Point vec = target - Position;
+			// Add up the distances:
+			// 1. to path.back()
+			// 2. path.back() to border
+			// 3. All intermediate block size
+			// 4. to end point
+			// reachEndTime = (vec.Magnitude() + (path.size() - 1) * PlayScene::BlockSize - remainSpeed) / speed;
+			Engine::Point normalized = vec.Normalize();
+			if (remainSpeed - vec.Magnitude() > 0) 
+			{
+				Position = target;
+				intermediate_path.pop_back();
+				remainSpeed -= vec.Magnitude();
+				// Reach the intermediate point
+				if(intermediate_path.size() == 0)
+				{
+					UpdatePath(getPlayScene()->mapDistance);
+					pass_intermediate_point = true;
+				}
+			}
+			else {
+				Velocity = normalized * remainSpeed / deltaTime;
+				remainSpeed = 0;
+			}
 		}
-		Engine::Point target = path.back() * PlayScene::BlockSize + Engine::Point(PlayScene::BlockSize / 2, PlayScene::BlockSize / 2);
-		Engine::Point vec = target - Position;
-		// Add up the distances:
-		// 1. to path.back()
-		// 2. path.back() to border
-		// 3. All intermediate block size
-		// 4. to end point
-		reachEndTime = (vec.Magnitude() + (path.size() - 1) * PlayScene::BlockSize - remainSpeed) / speed;
-		Engine::Point normalized = vec.Normalize();
-		if (remainSpeed - vec.Magnitude() > 0) {
-			Position = target;
-			path.pop_back();
-			remainSpeed -= vec.Magnitude();
+		else
+		{
+			pass_intermediate_point = true;
+			if (path.empty()) 
+			{
+				// Reach end point.
+				Hit(hp);
+				getPlayScene()->Hit();
+				reachEndTime = 0;
+				return;
+			}
+			Engine::Point target = path.back() * PlayScene::BlockSize + Engine::Point(PlayScene::BlockSize / 2, PlayScene::BlockSize / 2);
+			Engine::Point vec = target - Position;
+			// Add up the distances:
+			// 1. to path.back()
+			// 2. path.back() to border
+			// 3. All intermediate block size
+			// 4. to end point
+			reachEndTime = (vec.Magnitude() + (path.size() - 1) * PlayScene::BlockSize - remainSpeed) / speed;
+			Engine::Point normalized = vec.Normalize();
+			if (remainSpeed - vec.Magnitude() > 0) {
+				Position = target;
+				path.pop_back();
+				remainSpeed -= vec.Magnitude();
+			}
+			else {
+				Velocity = normalized * remainSpeed / deltaTime;
+				remainSpeed = 0;
+			}
 		}
-		else {
-			Velocity = normalized * remainSpeed / deltaTime;
-			remainSpeed = 0;
-		}
+
 	}
 	Rotation = atan2(Velocity.y, Velocity.x);
 	Sprite::Update(deltaTime);
 }
+
+// void Enemy::Update(float deltaTime) {
+// 	// Pre-calculate the velocity.
+
+// 	float remainSpeed = speed * deltaTime;
+// 	froze_count_down -= deltaTime;
+// 	if(froze_count_down > 0)
+// 		remainSpeed = 0.001;
+// 	else
+// 		froze_count_down = 0;
+
+// 	while (remainSpeed != 0) {
+// 		if (path.empty()) {
+// 			// Reach end point.
+// 			Hit(hp);
+// 			getPlayScene()->Hit();
+// 			reachEndTime = 0;
+// 			return;
+// 		}
+// 		Engine::Point target = path.back() * PlayScene::BlockSize + Engine::Point(PlayScene::BlockSize / 2, PlayScene::BlockSize / 2);
+// 		Engine::Point vec = target - Position;
+// 		// Add up the distances:
+// 		// 1. to path.back()
+// 		// 2. path.back() to border
+// 		// 3. All intermediate block size
+// 		// 4. to end point
+// 		reachEndTime = (vec.Magnitude() + (path.size() - 1) * PlayScene::BlockSize - remainSpeed) / speed;
+// 		Engine::Point normalized = vec.Normalize();
+// 		if (remainSpeed - vec.Magnitude() > 0) {
+// 			Position = target;
+// 			path.pop_back();
+// 			remainSpeed -= vec.Magnitude();
+// 		}
+// 		else {
+// 			Velocity = normalized * remainSpeed / deltaTime;
+// 			remainSpeed = 0;
+// 		}
+// 	}
+// 	Rotation = atan2(Velocity.y, Velocity.x);
+// 	Sprite::Update(deltaTime);
+// }
 
 void Enemy::Draw() const {
 	Sprite::Draw();
@@ -211,6 +293,11 @@ void Enemy::set_froze_timer(float duration)
 void Enemy::set_pass_intermediate_point(bool pass)
 {
 	pass_intermediate_point = pass;
+}
+
+bool Enemy::get_pass_intermediate_point() const
+{
+	return pass_intermediate_point;
 }
 
 // int Enemy::get_cost() const 

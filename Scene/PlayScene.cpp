@@ -622,13 +622,11 @@ void PlayScene::ExitOnClick()
 	Engine::GameEngine::GetInstance().ChangeScene("lose");
 }
 
-void PlayScene::ActivateCheatMode()
-{
-	EarnMoney(10000);
-	EffectGroup->AddNewObject(new Plane());
-}
-
-
+// void PlayScene::ActivateCheatMode()
+// {
+// 	EarnMoney(10000);
+// 	EffectGroup->AddNewObject(new Plane());
+// }
 
 // void PlayScene::UIBtnClicked(int id)
 // {

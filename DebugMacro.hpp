@@ -3,7 +3,7 @@
 
 // PlayScene.cpp
 #define PRINT_MAP_DISTANCE 0
-#define PRINT_INTERMEDIATE_MAP_DISTANCE 1
+#define PRINT_INTERMEDIATE_MAP_DISTANCE 0
 #define DIRECT_WIN 0
 
 // main.cpp

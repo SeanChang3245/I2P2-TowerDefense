@@ -484,3 +484,9 @@ void NormalPlayScene::UpdateSpawnEnemy(float deltaTime)
 	// Compensate the time lost.
 	enemy->Update(ticks);
 }
+
+void NormalPlayScene::ActivateCheatMode()
+{
+	EarnMoney(10000);
+	EffectGroup->AddNewObject(new Plane());
+}

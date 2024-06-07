@@ -25,7 +25,7 @@ private:
 	bool playing_danger_bgm;
 	Engine::Point intermediate_point;
 
-	// Store the distacne to the intermediate point
+	// Store the distacne to the intermediate point, empty if there is no intermediate point
 	std::vector<std::vector<int>> intermediateMapDistance;
 
 	// int lives;
@@ -104,6 +104,7 @@ public:
 	virtual void OnMouseMove(int mx, int my) override final;
 	virtual void OnMouseUp(int button, int mx, int my) override final;
 	virtual void UpdateDangerIndicator() override final;
+	virtual void ActivateCheatMode() override final;
 
 	virtual void PlaceTurret(const int &x, const int &y) override final;
 	virtual void DeconstructTurret(const int &x, const int &y) override final;
@@ -113,7 +114,10 @@ public:
 	void UpdateTimer(float deltaTime);
 	explicit ReversePlayScene() = default;
 	void ChooseTurretType();
+	// Check if need to add a new turret, if yes, then add
 	void UpdatePlaceTurret(float deltaTime);
+	// After placing new turret, update all enemies' path and intermediate_path
+	void UpdateAllEnemyPath();
 	void SetChooseTurretPositionFunc(std::function<void(void)> selectFunc);
 	void set_intermediate_point(int x, int y);
 

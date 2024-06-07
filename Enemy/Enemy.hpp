@@ -48,6 +48,7 @@ public:
 	float reachEndTime;
 	std::list<Turret*> lockedTurrets;
 	std::list<Bullet*> lockedBullets;
+
 	Enemy(std::string img, float x, float y, float radius, float speed, float hp, int money);
  	void Hit(float damage);
 	void UpdatePath(const std::vector<std::vector<int>>& mapDistance);
@@ -57,6 +58,7 @@ public:
 	int get_kill_score() const;
 	void set_froze_timer(float duration);
 	void set_pass_intermediate_point(bool pass);
+	bool get_pass_intermediate_point() const;
 
 	// float get_max_HP() const;
 	// int get_cost() const;

@@ -8,6 +8,8 @@
 #include <string>
 #include <memory>
 #include <random>
+#include <iostream>
+using namespace std;
 
 #include "Engine/AudioHelper.hpp"
 #include "UI/Animation/DirtyEffect.hpp"
@@ -49,7 +51,7 @@
 // 										  ALLEGRO_KEY_LEFT, ALLEGRO_KEY_LEFT, ALLEGRO_KEY_RIGHT, ALLEGRO_KEY_RIGHT,
 // 										  ALLEGRO_KEY_B, ALLEGRO_KEY_A, ALLEGRO_KEYMOD_SHIFT, ALLEGRO_KEY_ENTER};
 
-const float ReversePlayScene::PlaceTurretDuration = 10.0;
+const float ReversePlayScene::PlaceTurretDuration = 3.0;
 
 using Engine::LOG;
 using Engine::INFO;
@@ -259,6 +261,9 @@ void ReversePlayScene::UIBtnClicked(int id)
         return;
     EarnMoney(-cost);
 
+	// Check if there is a valid intermediate point
+	if(intermediateMapDistance.size())
+		enemy->UpdateIntermediatePath(intermediateMapDistance);
     enemy->UpdatePath(mapDistance);
     enemy->Update(ticks);
 
@@ -322,8 +327,6 @@ void ReversePlayScene::UpdateDangerIndicator()
 	
 }
 
-#include <iostream>
-using namespace std;
 void ReversePlayScene::UpdatePlaceTurret(float deltaTime)
 {
 	placeTurretCountDown -= deltaTime;
@@ -334,6 +337,10 @@ void ReversePlayScene::UpdatePlaceTurret(float deltaTime)
 	ChooseTurretPosition();
 	ChooseTurretType();
 	PlaceTurret(turret_pos.x, turret_pos.y);
+
+	if(intermediate_point.x != -1 && intermediate_point.y != -1)
+		intermediateMapDistance = CalculateBFSDistance(intermediate_point.x, intermediate_point.y);
+	UpdateAllEnemyPath();
 
 	placeTurretCountDown = PlaceTurretDuration;
 }
@@ -506,10 +513,16 @@ Engine::Point ReversePlayScene::closet_valid_space(Engine::Point p)
 
 void ReversePlayScene::set_intermediate_point(int x, int y)
 {
-	if(mapState[y][x] != TILE_DIRT)
+	// cancel intermediate_point
+	if(mapState[y][x] != TILE_DIRT || mapDistance[y][x] == -1) // the tile is not valid or can't be reach
 	{
 		intermediate_point.x = intermediate_point.y = -1;
-
+		intermediateMapDistance.clear();
+		for(auto &it : EnemyGroup->GetObjects())
+		{
+			Enemy* enemy = dynamic_cast<Enemy*>(it);
+			enemy->set_pass_intermediate_point(true);
+		}
 	}
 	else
 	{
@@ -526,6 +539,25 @@ void ReversePlayScene::set_intermediate_point(int x, int y)
 
 	// update enemy path
 	// show icon on intermediate point
+}
+
+void ReversePlayScene::ActivateCheatMode() 
+{
+	EarnMoney(10000);
+}
+
+void ReversePlayScene::UpdateAllEnemyPath()
+{
+	for(auto &it : EnemyGroup->GetObjects())
+	{
+		Enemy *enemy = dynamic_cast<Enemy*>(it);
+		
+		if(intermediateMapDistance.size() && !enemy->get_pass_intermediate_point())
+		{
+			enemy->UpdateIntermediatePath(intermediateMapDistance);
+		}
+		enemy->UpdatePath(mapDistance);
+	}
 }
 
 void ReversePlayScene::DeconstructTurret(const int &x, const int &y) {}

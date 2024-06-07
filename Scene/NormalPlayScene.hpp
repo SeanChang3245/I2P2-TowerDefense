@@ -80,6 +80,7 @@ public:
 	// delete turret (x,y) and return half of its price if exist
 	virtual void DeconstructTurret(const int &x, const int &y) override final;
 	virtual void UpdateDangerIndicator() override final;
+	virtual void ActivateCheatMode() override final;
 
 // ========= Non-Virtual Functions ============ // 	
 

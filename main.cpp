@@ -38,9 +38,7 @@ int main(int argc, char **argv) {
 	game.AddNewScene("scoreboard", new ScoreboardScene());
 
     // TODO: [HACKATHON-1-SCENE] (4/4): Change the start scene
-	
 
-	// game.Start("play-reverse", 60, 1600, 832);
 	game.Start("start", 60, 1600, 832);
 	return 0;
 }
