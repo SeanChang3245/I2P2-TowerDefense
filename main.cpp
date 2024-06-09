@@ -15,11 +15,14 @@
 #include "Scene/ScoreboardScene.hpp"
 #include "Scene/MapCreateScene.hpp"
 #include "DebugMacro.hpp"
+#include <iostream>
+using namespace std;
 
 int main(int argc, char **argv) {
 	Engine::LOG::SetConfig(true, PRINT_LOG_VERBOSE);
 	Engine::GameEngine& game = Engine::GameEngine::GetInstance();
 
+	cout << "hello world";
     // TODO: [HACKATHON-1-SCENE] (3/4): Register Scenes here
 	game.AddNewScene("start", new StartScene());
 
